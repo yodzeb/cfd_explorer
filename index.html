@@ -30,12 +30,14 @@
 	  <div class="row">
 	    <form action="javascript:load_flights()">
 	      <div class="form-row">
-		<div class="col">
-		  <select id="season" class="custom-select mr-sm-2"><option value=null>Toutes saisons</option></select>
-		</div>
 		<div class="col"><input class="form-control" placeholder="Prenom" type="text"     name="pilot_surname" size="10" id="pilot_surname"/></div>
 		<div class="col"><input class="form-control" placeholder="Nom" type="text" name="pilot_name" size="10" id="pilot_name"/></div>
 		<div class="col"><input class="form-control" placeholder="Club" type="text" name="pilot_club" size="10" id="pilot_club"/></div>
+		<div class="col"><input class="form-control" placeholder="Departement" type="text" name="pilot_dept" size="10" id="pilot_dept"/></div>
+		<div class="col">
+		  <select id="season" class="custom-select mr-sm-2"><option value=null>Toutes saisons</option></select>
+		</div>
+
 		<div class="col">
 		  <div class="custom-control custom-checkbox mr-sm-2">
 		    <input class="custom-control-input"  type="checkbox" name="pilot_bi"  id="pilot_bi"/>
@@ -45,14 +47,20 @@
 		<div class="col">
 		  <input type="submit" value="Rechercher les vols"/>
 		</div>
-			    <span id="loading"></span>
+		<span id="loading"></span>
 	      </div>
-	    
+	      
 	    </form>
 	  </div>
 	  <div style="height: 95%;" class=" row flex-grow-1">
 	    <div class="col-sm-7 h-100">
-	      <div id="map" class="" ><div style="text-align: center; margin-top: 50vh; transform: translateY(-50%); "><h2>Rechercher les vols par nom, prénom ou club.</h2> <h3>3 lettres minimum pour nom ou club</h3>Nom ou club obligatoire</div></div>
+	      <div id="map" class="" ><div style="text-align: center; margin-top: 50vh; transform: translateY(-50%); "><h2>Rechercher les vols par nom, prénom, club, departement ou saison</h2>
+		  Afin de limiter les resultats, selectionner au moins:<br/>
+		  Nom<br/>
+		  ou club<br/>
+		  ou departement+saison.<br/>
+		</div>
+	      </div>
 	    </div>
 	    <div id="summary" class="col-sm-5 h-100 overflow-auto"></div>
 	  </div>

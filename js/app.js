@@ -87,12 +87,14 @@ function load_flights(/*name, club*/) {
     var surname = document.getElementById("pilot_surname").value;
     var season  = document.getElementById("season").value;
     var biplace = document.getElementById("pilot_bi").checked;
+    var dept    = document.getElementById("pilot_dept").value;
     var params = {
 	"season": season,
 	"surname": surname,
 	"name": name,
 	"club": club,
-	"bi"  : biplace
+	"bi"  : biplace,
+	"dept": dept
     };
     get_cfd_page(params)
 }
@@ -100,7 +102,7 @@ function load_flights(/*name, club*/) {
 function get_cfd_page(params) {
     var http = new XMLHttpRequest();
     var url = "/cfd/cgi/get_xls.php";
-    var params = "name="+params["name"]+"&club="+params["club"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"");
+    var params = "name="+params["name"]+"&club="+params["club"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"&dept="+params["dept"]);
     document.getElementById("loading").innerHTML = "Chargement en cours...";
     http.open("GET", url+"?"+params, true);
     http.onreadystatechange = function() {//Call a function when the state changes.
@@ -173,8 +175,10 @@ function convert_data(data) {
     sum += "</tbody></table>";
 
     //console.log (avg_lat);
-    avg_lat = avg_lat / count;
-    avg_lng = avg_lng / count;
+    if (count > 0) {
+	avg_lat = avg_lat / count;
+	avg_lng = avg_lng / count;
+    }
     display_map(lines, avg_lat, avg_lng, sum);
 }
 

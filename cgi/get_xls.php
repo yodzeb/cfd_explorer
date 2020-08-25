@@ -116,18 +116,26 @@ function get_empty_message() {
 $response = get_empty_message();
 $season = "";
 $biplace = 0;
+$dept = "";
+$name="";
+$club="";
+if ($_GET['name'] && preg_match('#^[\w\s\-]{3,20}$#', $_GET['name'])){
+    $name    = $_GET["name"];
+}
+if ($_GET["club"] && preg_match('#^[\w\-\s]*$#', $club))
+    $club = $_GET["club"];
 if ($_GET["season"] && preg_match('/^\d{4}$/', $_GET["season"])) {
     $season = $_GET["season"];
     array_push($response['warnings'], "SEASON!");    
 }
 if ($_GET['bi'] == "1")
     $biplace = 1;
-$name    = $_GET["name"];
-$club = $_GET["club"];
-$surname = $_GET["surname"];
-#echo $club;
-if (((preg_match('#^[\w\s\-]{3,}$#', $name) && preg_match('#^[\w\-\s]*$#', $club) && preg_match('#^\w*$#', $surname)) ||
-preg_match('#^\w*$#', $name) && preg_match('#^[\w\s]{3,}$#', $club) && preg_match('#^\w*$#', $surname) ) || $biplace == "1"){
+if ($_GET['dept'] && preg_match('/^\d{2,3}$/', $_GET['dept']))
+    $dept = $_GET['dept'];
+if ($_GET["surname"] && preg_match('#^\w*$#', $surname))
+    $surname = $_GET["surname"];
+
+if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace == "1") {
     $url = "https://parapente.ffvl.fr/cfd/selectionner-les-vols";
     # 1650-1-0=null&1650-1-1=&1650-1-2=&1650-1-3=&1650-1-4=null&1650-1-5=null&1650-1-6=&1650-1-7=null&1650-1-8=morlet&1650-1-9=&1650-1-10=&1650-1-11=&1650-1-12=&1650-1-13=&1650-1-17=&1650-1-18=null&1650-1-19=parapente&1650-1-20=&op=Filtrer&form_build_id=form-9cHJdyCrDyC94DCopQZXt-y4P1byHeWxsaOofF_-dGw&form_token=K_BASQKzh63xy276RyA2p0opN0Tpy79QMIcWilcNn4M&form_id=requete_filtre_form
     $data = array(
@@ -135,6 +143,7 @@ preg_match('#^\w*$#', $name) && preg_match('#^[\w\s]{3,}$#', $club) && preg_matc
         "1650-1-0"  => $season, #NULL, # season
         "1650-1-1"  => "",
         "1650-1-2"  => "",
+        "1650-1-3"  => $dept,
         "1650-1-4"  => NULL,
         "1650-1-5"  => NULL,
         "1650-1-6"  => $club,
@@ -172,7 +181,7 @@ preg_match('#^\w*$#', $name) && preg_match('#^[\w\s]{3,}$#', $club) && preg_matc
         if (preg_match_all('#<tr><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td>.*?<td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td><td>([^\<]*)</td> </tr>#', $html_xls, $matches, PREG_OFFSET_CAPTURE)) {
             array_push($response['warnings'], "Parsing HTML");
             parse_html($matches, $response, $surname, $name);
-            file_put_contents ( "/tmp/bla_raw", $html_xls);
+            #file_put_contents ( "/tmp/bla_raw", $html_xls);
 
         }
         else {
