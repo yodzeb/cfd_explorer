@@ -1,0 +1,8 @@
+.h2 {
+    text-align: center;
+    vertical-align:center;
+}
+#map {
+    height: 100%;
+    weight: 100%;
+}
