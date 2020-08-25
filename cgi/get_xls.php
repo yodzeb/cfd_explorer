@@ -126,7 +126,7 @@ $name    = $_GET["name"];
 $club = $_GET["club"];
 $surname = $_GET["surname"];
 #echo $club;
-if (((preg_match('#^\w{3,}$#', $name) && preg_match('#^[\w\s]*$#', $club) && preg_match('#^\w*$#', $surname)) ||
+if (((preg_match('#^[\w\s\-]{3,}$#', $name) && preg_match('#^[\w\-\s]*$#', $club) && preg_match('#^\w*$#', $surname)) ||
 preg_match('#^\w*$#', $name) && preg_match('#^[\w\s]{3,}$#', $club) && preg_match('#^\w*$#', $surname) ) || $biplace == "1"){
     $url = "https://parapente.ffvl.fr/cfd/selectionner-les-vols";
     # 1650-1-0=null&1650-1-1=&1650-1-2=&1650-1-3=&1650-1-4=null&1650-1-5=null&1650-1-6=&1650-1-7=null&1650-1-8=morlet&1650-1-9=&1650-1-10=&1650-1-11=&1650-1-12=&1650-1-13=&1650-1-17=&1650-1-18=null&1650-1-19=parapente&1650-1-20=&op=Filtrer&form_build_id=form-9cHJdyCrDyC94DCopQZXt-y4P1byHeWxsaOofF_-dGw&form_token=K_BASQKzh63xy276RyA2p0opN0Tpy79QMIcWilcNn4M&form_id=requete_filtre_form
@@ -142,10 +142,7 @@ preg_match('#^\w*$#', $name) && preg_match('#^[\w\s]{3,}$#', $club) && preg_matc
         "1650-1-19" => "parapente",
         "1650-1-18" => NULL,
         "1650-1-14[1]"=> $biplace,
-
         "op" => "Filtrer",
-#        "form_build_id" => "form-9cHJdyCrDyC94DCopQZXt-y4P1byHeWxsaOofF_-dGw",
-#        "form_token"=>"K_BASQKzh63xy276RyA2p0opN0Tpy79QMIcWilcNn4M",
         "form_id" => "requete_filtre_form");
 
 // use key 'http' even if you send the request to https://...

@@ -3,7 +3,7 @@ $name_orig = $_GET["name"];
 $name=preg_replace("/.*\s+([^\s]+)$/", "$1", $_GET["name"]);
 $date    = $_GET["date"];
 
-if (!preg_match('/\w{4,}/', $name) || !preg_match('/^\d+\/\d+\/\d+$/', $date)) {
+if (!preg_match('/\w{3,}/', $name) || !preg_match('/^\d+\/\d+\/\d+$/', $date)) {
     echo "exit";
     exit();
 }
@@ -23,8 +23,6 @@ $data = array(
     "1650-1-18" => NULL,
 
     "op" => "Filtrer",
-    #        "form_build_id" => "form-9cHJdyCrDyC94DCopQZXt-y4P1byHeWxsaOofF_-dGw",
-    #        "form_token"=>"K_BASQKzh63xy276RyA2p0opN0Tpy79QMIcWilcNn4M",
     "form_id" => "requete_filtre_form");
 
 // use key 'http' even if you send the request to https://...
