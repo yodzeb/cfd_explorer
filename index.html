@@ -2,12 +2,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
+    
     <title>CFD Explorer</title>
     <style>html, body, #map {width:100%;height: 100%; margin: 0; padding: 0;}</style>
-    <link rel="icon" type="image/jpeg" href="img/favicon.ico">
+    <link rel="icon" type="image/jpeg" href="img/favicon.ico"/>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
 	  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="css/app.css"/>
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
 	    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -23,50 +24,63 @@
     <script src="js/leaflet-providers.js"></script>
     <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js" type="text/javascript"></script>
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"></link>
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
   </head>
-    <body onload="load()">
-      <div class="container-fluid  h-100 w-100 mx-0">
-	<div class="col  h-100 w-100 mw-90">
-	  <div class="row">
-	    <form action="javascript:load_flights()">
-	      <div class="form-row">
-		<div class="col"><input class="form-control" placeholder="Prenom" type="text"     name="pilot_surname" size="10" id="pilot_surname"/></div>
-		<div class="col"><input class="form-control" placeholder="Nom" type="text" name="pilot_name" size="10" id="pilot_name"/></div>
-		<div class="col"><input class="form-control" placeholder="Club" type="text" name="pilot_club" size="10" id="pilot_club"/></div>
-		<div class="col"><input class="form-control" placeholder="Departement" type="text" name="pilot_dept" size="10" id="pilot_dept"/></div>
-		<div class="col">
-		  <select id="season" class="custom-select mr-sm-2"><option value=null>Toutes saisons</option></select>
-		</div>
+  <body onload="load()">
+    <div class="container-fluid  h-100 w-100 mx-0">
+      <div class="col  h-100 w-100 mw-90">
+	<div class="row">
+	  <form action="javascript:load_flights()">
+	    <div class="form-row">
+	      <div class="col"><input class="form-control" placeholder="Prenom" type="text"     name="pilot_surname" size="10" id="pilot_surname"/></div>
+	      <div class="col"><input class="form-control" placeholder="Nom" type="text" name="pilot_name" size="10" id="pilot_name"/></div>
+	      <div class="col"><input class="form-control" placeholder="Club" type="text" name="pilot_club" size="10" id="pilot_club"/></div>
+	      <div class="col"><input class="form-control" placeholder="Departement" type="text" name="pilot_dept" size="10" id="pilot_dept"/></div>
+	      <div class="col">
+		<select id="season" class="custom-select mr-sm-2"><option value=null>Toutes saisons</option></select>
+	      </div>
 
-		<div class="col">
-		  <div class="custom-control custom-checkbox mr-sm-2">
-		    <input class="custom-control-input"  type="checkbox" name="pilot_bi"  id="pilot_bi"/>
-		    <label class="custom-control-label" for="pilot_bi">Biplace</label>
+	      <div class="col">
+		<div class="custom-control custom-checkbox mr-sm-2">
+		  <input class="custom-control-input"  type="checkbox" name="pilot_bi"  id="pilot_bi"/>
+		  <label class="custom-control-label" for="pilot_bi">Biplace</label>
+		</div>
+	      </div>
+	      <div class="col">
+		<input type="submit" value="Rechercher les vols"/>
+	      </div>
+	      <span id="loading"></span>
+	    </div>
+	    
+	  </form>
+	</div>
+	<div style="height: 95%;" class=" row flex-grow-1">
+	  <div class="col-sm-7 h-100">
+	    <div id="map" class="" ><div style="text-align: center; margin-top: 50vh; transform: translateY(-50%); "><h2>Rechercher les vols par nom, prénom, club, departement ou saison</h2>
+		Afin de limiter les resultats, selectionner au moins:<br/>
+		Nom<br/>
+		ou club<br/>
+		ou departement+saison.<br/>
+		<div class="col" style="text-align: center; translateY(-50%);">
+		  <div>
+		    <a href="https://twitter.com/messages/compose?recipient_id=940657015604633601"
+		       class="twitter-dm-button" data-screen-name="@yodzeb">Message @yodzeb</a>
+		    <!-- Place this tag where you want the button to render. -->
+		  </div>
+		  <div>
+		    <a class="github-button" href="https://github.com/yodzeb/cfd_explorer" data-icon="octicon-star" aria-label="Star yodzeb/cfd_explorer on GitHub">Star</a>
 		  </div>
 		</div>
-		<div class="col">
-		  <input type="submit" value="Rechercher les vols"/>
-		</div>
-		<span id="loading"></span>
 	      </div>
 	      
-	    </form>
-	  </div>
-	  <div style="height: 95%;" class=" row flex-grow-1">
-	    <div class="col-sm-7 h-100">
-	      <div id="map" class="" ><div style="text-align: center; margin-top: 50vh; transform: translateY(-50%); "><h2>Rechercher les vols par nom, prénom, club, departement ou saison</h2>
-		  Afin de limiter les resultats, selectionner au moins:<br/>
-		  Nom<br/>
-		  ou club<br/>
-		  ou departement+saison.<br/>
-		</div>
-	      </div>
 	    </div>
-	    <div id="summary" class="col-sm-5 h-100 overflow-auto"></div>
+	    
 	  </div>
+	  <div id="summary" class="col-sm-5 h-100 overflow-auto"></div>
 	</div>
       </div>
     </div>
   </body>
 </html>
-  
+
