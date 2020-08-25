@@ -15,9 +15,25 @@ function parse_html($matches, &$response, $surname, $name) {
     foreach ($matches[0] as $v) {
         if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v[0])) {
             $pilot = $matches[10][$id][0];
-            $pilots[$pilot] = $pilots[$pilot]+1;
+            $km    = $matches[5][$id][0];
+            if ($pilots[$pilot]["flights"])
+                $pilots[$pilot]["flights"] = $pilots[$pilot]["flights"]+1;
+            else
+                $pilots[$pilot]["flights"] = 1;
+            if ($pilots[$pilot]["max"]){
+                if ( $km > $pilots[$pilot]["max"]){
+                    $pilots[$pilot]["max"] = (float) $km;
+                }
+            }
+            else
+                $pilots[$pilot]["max"] = (float)$km;
+            if ($pilots[$pilot]["sum"])
+                $pilots[$pilot]["sum"] += $km;
+            else
+                $pilots[$pilot]["sum"] = (float) $km;
             $flight = array(
                 "date"   => utf8_encode ( $matches[4][$id][0]),
+                "km"     => utf8_encode ( $km),
                 "pilot"  => $pilot,
                 "BD"     => utf8_encode ( $matches[11][$id][0] ),
                 "lat BD" => myconvert($matches[12][$id][0]),
@@ -35,10 +51,15 @@ function parse_html($matches, &$response, $surname, $name) {
                 "lat BA" => myconvert($matches[28][$id][0]),
                 "lon BA" => myconvert($matches[29][$id][0]),
             );
-
             array_push($flights, $flight);
         }
         $id = $id + 1;
+    }
+    foreach ($pilots as $p => $v) {
+        #var_dump($p);
+        $pilots[$p]["avg"] = 0;
+        if ($v["flights"] != 0)
+            $pilots[$p]["avg"] = round($v["sum"]/$v["flights"]);
     }
     $response['raw_flights'] = $flights;
     $response['pilots']      = $pilots;

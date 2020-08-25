@@ -139,21 +139,37 @@ function convert_data(data) {
 	poline2.push([convertCoord(data['raw_flights'][f]["lat BA"]),  convertCoord(data['raw_flights'][f]["lon BA"]) ])
 	poly = { 'line': poline2,
 		 'pilot': data['raw_flights'][f]['pilot'],
-		 'date' : data['raw_flights'][f]['date']}
+		 'date' : data['raw_flights'][f]['date'],
+		 "km"   : data['raw_flights'][f]['km'],
+	       }
 	//lines.push(poline2);
 	lines.push(poly);
 	id = id+1;
     }
-    sum = "<div onclick=reinit_pilot()>All</div>";
+    /*
+    sum = "<div onclick=reinit_pilot()>All ( Vols / Total / Max / Moy)</div>";
     all_pilots = [];
     var id=0;
     for (p in data["pilots"]) {
 	sum += '<div onmouseover="select_pilot('+id+')" onmouseout="reinit_pilot()" onclick="select_pilot('+id+')" ondblclick="submit_post('+id+')"><span  style="background-color:'+stringToColour(p)+'">&nbsp;&nbsp;</span>';
-	sum += p+":";
-	sum += data["pilots"][p]+"</div>";
+	sum += p+" (";
+	sum += data["pilots"][p]["flights"]+" / "+data["pilots"][p]["sum"]+" / "+data["pilots"][p]["max"]+" / "+data["pilots"][p]["avg"]+" )</div>";
 	all_pilots.push(p);
 	id+=1;
     }
+    */
+    sum = "<table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>All Pilots</th><th class='th-sm'>Vols</th><th class='th-sm'>Total</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
+    all_pilots = [];
+    var id=0;
+    for (p in data["pilots"]) {
+	sum += '<tr onmouseover="select_pilot('+id+')" onmouseout="reinit_pilot()" onclick="select_pilot('+id+')" ondblclick="submit_post('+id+')"><td><span  style="background-color:'+stringToColour(p)+'">&nbsp;&nbsp;</span>';
+	sum += p+"</td>";
+	sum += "<td>"+data["pilots"][p]["flights"]+"</td><td>"+Math.round(data["pilots"][p]["sum"])+"</td><td>"+Math.round(data["pilots"][p]["max"])+"</td><td>"+data["pilots"][p]["avg"]+"</td></tr>";
+	all_pilots.push(p);
+	id+=1;
+    }
+    sum += "</tbody></table>";
+
     //console.log (avg_lat);
     avg_lat = avg_lat / count;
     avg_lng = avg_lng / count;
@@ -168,13 +184,6 @@ function on_Click(e) {
 	    console.log ("got match");
 	    var id=0;
 	    var pilot = poly_res[l]["pilot"];
-	    /*
-	    for (p in all_pilots){
-		if (all_pilots[p] == pilot){
-		    id = p
-		    break;
-		}
-	    }*/	    
 	    var date = poly_res[l]["date"];
 	    goto_flight(pilot, date);
 	}
@@ -226,8 +235,8 @@ function display_map (lines, x, y, sum) {
 	    discard = discard || ( lines[l]['line'][aa][0] == 300 );
 	}
 	if (discard == false) {
-	    var text     = lines[l]['pilot']+' (click!)';
-	    var polyline = L.polyline(lines[l]['line'], {color: stringToColour(lines[l]["pilot"])/*'red'*/}).bindTooltip(text).on('click', on_Click);
+	    var text     = lines[l]["km"]+" km le "+lines[l]["date"]+" - "+lines[l]['pilot']+' (click!)';
+	    var polyline = L.polyline(lines[l]['line'], {weight:4,color: stringToColour(lines[l]["pilot"])/*'red'*/}).bindTooltip(text).on('click', on_Click);
 	    poly_res.push({"poly": polyline, "pilot": lines[l]['pilot'], "display": true, "date": lines[l]['date']});
 	    polyline.addTo(map);
 	}
@@ -237,6 +246,17 @@ function display_map (lines, x, y, sum) {
 	id = id + 1;
     }
     document.getElementById("summary").innerHTML = sum;
+    $('#pilot_list').DataTable({
+	"pageLength": 15,
+	"columns": [
+	    { "type": "html" },
+	    { "type": "num-fmt" },
+	    { "type": "num-fmt" },
+	    { "type": "num-fmt" },
+	    { "type": "num-fmt" }
+	]
+    } );
+    $('.dataTables_length').addClass('bs-select');
     window.scrollTo(0,1);
     //   zoomOutMobile();
 }
