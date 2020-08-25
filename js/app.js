@@ -1,3 +1,4 @@
+var popup;
 var map;
 var years=[];
 
@@ -151,18 +152,19 @@ function convert_data(data) {
     all_pilots = [];
     var id=0;
     for (p in data["pilots"]) {
-	sum += '<div onmouseover="select_pilot('+id+')" onmouseout="reinit_pilot()" onclick="select_pilot('+id+')" ondblclick="submit_post('+id+')"><span  style="background-color:'+stringToColour(p)+'">&nbsp;&nbsp;</span>';
+	sum += '<div onmouseover="select_pilot('+id+')" onmouseout="reinit_pilot()" onclick="select_pilot('+id+')" ondblclick="submit_post('+id+')"><span  style="background-color:'+stringToColour(p)+'">&nbsp;&nbsp;&nbsp;</span>&nbsp;';
 	sum += p+" (";
 	sum += data["pilots"][p]["flights"]+" / "+data["pilots"][p]["sum"]+" / "+data["pilots"][p]["max"]+" / "+data["pilots"][p]["avg"]+" )</div>";
 	all_pilots.push(p);
 	id+=1;
     }
     */
-    sum = "<table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>All Pilots</th><th class='th-sm'>Vols</th><th class='th-sm'>Total</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
+    sum = "<a href='javascript:reinit_pilot()' onmouseover='javascript:reinit_pilot()'>Voir tous</a><table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>Pilotes</th><th class='th-sm'>Vols</th><th class='th-sm'>Tot</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
     all_pilots = [];
     var id=0;
     for (p in data["pilots"]) {
-	sum += '<tr onmouseover="select_pilot('+id+')" onmouseout="reinit_pilot()" onclick="select_pilot('+id+')" ondblclick="submit_post('+id+')"><td><span  style="background-color:'+stringToColour(p)+'">&nbsp;&nbsp;</span>';
+	    // onmouseout="reinit_pilot()"
+	sum += '<tr onmouseover="select_pilot('+id+')"  onclick="select_pilot('+id+')" ondblclick="submit_post('+id+')"><td><span  style="background-color:'+stringToColour(p)+'">&nbsp;&nbsp;&nbsp;</span>&nbsp;';
 	sum += p+"</td>";
 	sum += "<td>"+data["pilots"][p]["flights"]+"</td><td>"+Math.round(data["pilots"][p]["sum"])+"</td><td>"+Math.round(data["pilots"][p]["max"])+"</td><td>"+data["pilots"][p]["avg"]+"</td></tr>";
 	all_pilots.push(p);
@@ -178,6 +180,8 @@ function convert_data(data) {
 
 var poly_res = [];
 function on_Click(e) {
+    console.log (e);
+    
     for (l in poly_res) {
 	//console.log (poly_res[l]["poly"]["_leaflet_id"] );
 	if (poly_res[l]["poly"]["_leaflet_id"] == e["sourceTarget"]["_leaflet_id"]) {
@@ -185,10 +189,14 @@ function on_Click(e) {
 	    var id=0;
 	    var pilot = poly_res[l]["pilot"];
 	    var date = poly_res[l]["date"];
-	    goto_flight(pilot, date);
+	    console.log (poly_res[l]);
+	    popup = L.popup()
+		.setLatLng([e['latlng']["lat"], e['latlng']["lng"] ])
+		.setContent(poly_res[l]["pilot"]+", "+poly_res[l]["km"]+" km le "+date+" <a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a>")
+		.openOn(map);
+	    
 	}
     }
-    //console.log(l);
 }
 
 var stringToColour = function(str) {
@@ -203,6 +211,20 @@ var stringToColour = function(str) {
     }
     return colour;
 }
+
+function set_pilot_table() {
+    $('#pilot_list').DataTable({
+	"pageLength": 15,
+	"columns": [
+	    { "type": "html" },
+	    { "type": "num-fmt" },
+	    { "type": "num-fmt" },
+	    { "type": "num-fmt" },
+	    { "type": "num-fmt" }
+	]
+    } );
+    $('.dataTables_length').addClass('bs-select');
+};
 
 
 function display_map (lines, x, y, sum) {
@@ -226,6 +248,7 @@ function display_map (lines, x, y, sum) {
     }).addTo(map);
     
     L.control.scale().addTo(map);
+
     
     var id = 0;
     for (l in lines ) {
@@ -237,7 +260,7 @@ function display_map (lines, x, y, sum) {
 	if (discard == false) {
 	    var text     = lines[l]["km"]+" km le "+lines[l]["date"]+" - "+lines[l]['pilot']+' (click!)';
 	    var polyline = L.polyline(lines[l]['line'], {weight:4,color: stringToColour(lines[l]["pilot"])/*'red'*/}).bindTooltip(text).on('click', on_Click);
-	    poly_res.push({"poly": polyline, "pilot": lines[l]['pilot'], "display": true, "date": lines[l]['date']});
+	    poly_res.push({"poly": polyline, "pilot": lines[l]['pilot'], "display": true, "date": lines[l]['date'], "km": lines[l]['km'] }); 
 	    polyline.addTo(map);
 	}
 	else {
@@ -246,19 +269,7 @@ function display_map (lines, x, y, sum) {
 	id = id + 1;
     }
     document.getElementById("summary").innerHTML = sum;
-    $('#pilot_list').DataTable({
-	"pageLength": 15,
-	"columns": [
-	    { "type": "html" },
-	    { "type": "num-fmt" },
-	    { "type": "num-fmt" },
-	    { "type": "num-fmt" },
-	    { "type": "num-fmt" }
-	]
-    } );
-    $('.dataTables_length').addClass('bs-select');
-    window.scrollTo(0,1);
-    //   zoomOutMobile();
+    set_pilot_table();
 }
 
 function select_pilot(pp) {
