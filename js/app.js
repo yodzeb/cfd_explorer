@@ -98,7 +98,7 @@ function load_flights(/*name, club*/) {
 
 function get_cfd_page(params) {
     var http = new XMLHttpRequest();
-    var url = "http://home.wiro.fr:8080/cfd/cgi/get_xls.php";
+    var url = "/cfd/cgi/get_xls.php";
     var params = "name="+params["name"]+"&club="+params["club"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"");
     document.getElementById("loading").innerHTML = "Chargement en cours...";
     http.open("GET", url+"?"+params, true);
@@ -267,7 +267,7 @@ function reinit_pilot() {
 
 function goto_flight(pilot, date) {
     var http = new XMLHttpRequest();
-    var url = "http://home.wiro.fr:8080/cfd/cgi/get_link.php";
+    var url = "/cfd/cgi/get_link.php";
     var params = "name="+pilot+"&date="+date;
     http.open("GET", url+"?"+params, true);
     http.onreadystatechange = function() {//Call a function when the state changes.
