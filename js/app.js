@@ -102,7 +102,7 @@ function load_flights(/*name, club*/) {
 function get_cfd_page(params) {
     var http = new XMLHttpRequest();
     var url = "cgi/get_xls.php";
-    var params = "name="+params["name"]+"&club="+params["club"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"&dept="+params["dept"]);
+    var params = "name="+params["name"]+"&club="+params["club"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"")+"&dept="+params["dept"];
     document.getElementById("loading").innerHTML = "Chargement en cours...";
     http.open("GET", url+"?"+params, true);
     http.onreadystatechange = function() {//Call a function when the state changes.

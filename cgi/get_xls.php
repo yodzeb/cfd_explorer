@@ -140,6 +140,13 @@ if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace ==
     # 1650-1-0=null&1650-1-1=&1650-1-2=&1650-1-3=&1650-1-4=null&1650-1-5=null&1650-1-6=&1650-1-7=null&1650-1-8=morlet&1650-1-9=&1650-1-10=&1650-1-11=&1650-1-12=&1650-1-13=&1650-1-17=&1650-1-18=null&1650-1-19=parapente&1650-1-20=&op=Filtrer&form_build_id=form-9cHJdyCrDyC94DCopQZXt-y4P1byHeWxsaOofF_-dGw&form_token=K_BASQKzh63xy276RyA2p0opN0Tpy79QMIcWilcNn4M&form_id=requete_filtre_form
     $data = array(
         "1650-1-8"  => $name,
+        "1650-1-9"  => "",
+        "1650-1-10"  => "",
+        "1650-1-11"  => "",
+        "1650-1-12"  => "",
+        "1650-1-13"  => "",
+        "1650-1-17"  => "",
+        "1650-1-20"  => "",
         "1650-1-0"  => $season, #NULL, # season
         "1650-1-1"  => "",
         "1650-1-2"  => "",
