@@ -9,8 +9,8 @@ function myconvert ($val) {
 function parse_html($matches, &$response, $surname, $name) {
     #var_dump($matches);
     $id = 0;
-    $flights = array();
-    $pilots  = array();
+    $flights = $response["raw_flights"]; #array();
+    $pilots  = $response["pilots"]; #array();
     #array_push($response['warnings'], $matches);
     foreach ($matches[0] as $v) {
         if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v[0])) {
@@ -61,7 +61,7 @@ function parse_html($matches, &$response, $surname, $name) {
         if ($v["flights"] != 0)
             $pilots[$p]["avg"] = round($v["sum"]/$v["flights"]);
     }
-    $response['raw_flights'] = $flights;
+    $response['raw_flights'] = $flights; #array_merge($flights, $response['raw_flights']);
     $response['pilots']      = $pilots;
 }
 
@@ -99,7 +99,6 @@ function parse_csv($content, &$response, $surname, $name) {
     #echo json_encode($response);
     passthru("rm -f $filename $filename".".csv");
     return $response;
-    
 }
 
 function get_empty_message() {
@@ -110,7 +109,6 @@ function get_empty_message() {
     $msg['raw_flights'] = array();
     return $msg;  
 }
-
 
 
 $response = get_empty_message();
@@ -135,12 +133,29 @@ if ($_GET["season"] && preg_match('/^\d{4}$/', $_GET["season"])) {
 }
 if ($_GET['bi'] == "1")
     $biplace = 1;
-if ($_GET['dept'] && preg_match('/^\d{2,3}$/', $_GET['dept']))
+if ($_GET['dept'] && preg_match('/^([\d\w,]{2,4})*$/', $_GET['dept']))
     $dept = $_GET['dept'];
 if ($_GET["surname"] && preg_match('#^\w*$#', $surname))
     $surname = $_GET["surname"];
 
 if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace == "1" || $club_id != 0) {
+    $dept_list = explode(',', $dept);
+    #var_dump($dept_list);
+    if(sizeof($dept_list) < 10) {
+        foreach ($dept_list as $dept) {
+            #echo $dept;
+            do_request($name, $club, $dept, $season, $biplace, $club_id, $response) ;
+        }
+    }
+    else {
+        do_request($name, $club, $dept_list[0], $season, $biplace, $club_id, $response) ;
+        array_push($response["warnings"], "Too many departements.");
+    }
+}
+
+function do_request($name, $club, $dept, $season, $biplace, $club_id, &$response) {
+    #echo "doeing req";
+    array_push($response["warnings"], "Ding req");
     $url = "https://parapente.ffvl.fr/cfd/selectionner-les-vols";
     # 1650-1-0=null&1650-1-1=&1650-1-2=&1650-1-3=&1650-1-4=null&1650-1-5=null&1650-1-6=&1650-1-7=null&1650-1-8=morlet&1650-1-9=&1650-1-10=&1650-1-11=&1650-1-12=&1650-1-13=&1650-1-17=&1650-1-18=null&1650-1-19=parapente&1650-1-20=&op=Filtrer&form_build_id=form-9cHJdyCrDyC94DCopQZXt-y4P1byHeWxsaOofF_-dGw&form_token=K_BASQKzh63xy276RyA2p0opN0Tpy79QMIcWilcNn4M&form_id=requete_filtre_form
     $data = array(
@@ -205,9 +220,10 @@ if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace ==
         $response["warnings"] = "MISSING LINK";
     }
 }
-else {
-    $response["warnings"] = "NO_RES";//array("no_res");
-}
+/* else { */
+/*     $response["warnings"] = "NO_RES";//array("no_res"); */
+/* } */
+/* } */
 #var_dump($response);
 #$response["warnings"] = "NO_RES";
 header('Content-Type: application/json');
