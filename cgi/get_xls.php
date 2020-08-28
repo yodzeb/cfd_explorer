@@ -119,11 +119,16 @@ $biplace = 0;
 $dept = "";
 $name="";
 $club="";
+$club_id=0;
+if ($_GET['club_id'] && preg_match('#^\d+$#', $_GET['club_id']))
+    $club_id = $_GET['club_id']; # does not wrk. generated link frm CFD URI to long.
 if ($_GET['name'] && preg_match('#^[\w\s\-]{3,20}$#', $_GET['name'])){
     $name    = $_GET["name"];
 }
-if ($_GET["club"] && preg_match('#^[\w\-\s]*$#', $club))
+if ($_GET["club"] && preg_match('#^[\w\-\s]*$#', $club)) {
     $club = $_GET["club"];
+    $club = preg_replace('#\'#', '%', $club);
+}
 if ($_GET["season"] && preg_match('/^\d{4}$/', $_GET["season"])) {
     $season = $_GET["season"];
     array_push($response['warnings'], "SEASON!");    
@@ -135,7 +140,7 @@ if ($_GET['dept'] && preg_match('/^\d{2,3}$/', $_GET['dept']))
 if ($_GET["surname"] && preg_match('#^\w*$#', $surname))
     $surname = $_GET["surname"];
 
-if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace == "1") {
+if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace == "1" || $club_id != 0) {
     $url = "https://parapente.ffvl.fr/cfd/selectionner-les-vols";
     # 1650-1-0=null&1650-1-1=&1650-1-2=&1650-1-3=&1650-1-4=null&1650-1-5=null&1650-1-6=&1650-1-7=null&1650-1-8=morlet&1650-1-9=&1650-1-10=&1650-1-11=&1650-1-12=&1650-1-13=&1650-1-17=&1650-1-18=null&1650-1-19=parapente&1650-1-20=&op=Filtrer&form_build_id=form-9cHJdyCrDyC94DCopQZXt-y4P1byHeWxsaOofF_-dGw&form_token=K_BASQKzh63xy276RyA2p0opN0Tpy79QMIcWilcNn4M&form_id=requete_filtre_form
     $data = array(
@@ -154,7 +159,7 @@ if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace ==
         "1650-1-4"  => NULL,
         "1650-1-5"  => NULL,
         "1650-1-6"  => $club,
-        "1650-1-7"  => NULL,
+        "1650-1-7"  => ($club_id?$club_id:NULL), # club id
         "1650-1-19" => "parapente",
         "1650-1-18" => NULL,
         "1650-1-14[1]"=> $biplace,

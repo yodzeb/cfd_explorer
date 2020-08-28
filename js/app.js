@@ -1,6 +1,28 @@
 var popup;
 var map;
 var years=[];
+var clubs=[];
+var clubs_names=[];
+
+function load_clubs () {
+    //var json = require('ressources/clubs.json');
+    jQuery.getJSON("ressources/clubs.json", function(json) {
+	clubs = json;
+	for (e in clubs["clubs"]) {
+	    clubs_names.push(clubs["clubs"][e]["name"]);
+	}
+	console.log(clubs);
+	autocomplete(document.getElementById("club_name"), clubs["clubs"]);
+	console.log ("done");
+    });
+}
+
+$(document).ready(function () {
+    load_clubs();
+});
+
+
+
 
 function range(start, end, step) {
     if (start > end && step > 0) return [];
@@ -22,7 +44,6 @@ function load() {
 }
 
 var ExcelToJSON = function() {
-    
     this.parseExcel = function(file) {
 	var reader = new FileReader();
 	
@@ -83,26 +104,42 @@ function convertCoord(c) {
 
 function load_flights(/*name, club*/) {
     var name = document.getElementById("pilot_name").value;
-    var club = document.getElementById("pilot_club").value;
+    //var club = document.getElementById("pilot_club").value;
     var surname = document.getElementById("pilot_surname").value;
     var season  = document.getElementById("season").value;
     var biplace = document.getElementById("pilot_bi").checked;
     var dept    = document.getElementById("pilot_dept").value;
+    var club_name = document.getElementById("club_name").value;
     var params = {
 	"season": season,
 	"surname": surname,
 	"name": name,
-	"club": club,
+	//"club": club,
+	"club_name": club_name,
 	"bi"  : biplace,
 	"dept": dept
     };
     get_cfd_page(params)
 }
 
+function lookup_club_id(club_name) {
+    var ret = 0;
+    console.log("lokin "+club_name);
+    console.log(clubs);
+    for (c in clubs["clubs"]) {
+	if (clubs["clubs"][c]["name"] == club_name) {
+	    console.log("found id");
+	    ret=clubs["clubs"][c]["id"];
+	}
+    }
+    return ret;
+}
+
 function get_cfd_page(params) {
     var http = new XMLHttpRequest();
     var url = "cgi/get_xls.php";
-    var params = "name="+params["name"]+"&club="+params["club"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"")+"&dept="+params["dept"];
+    var club_id = lookup_club_id(params["club_name"]);
+    var params = "name="+params["name"]+"&club="+params["club_name"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"")+"&dept="+params["dept"];//+"&club_id="+club_id;
     document.getElementById("loading").innerHTML = "Chargement en cours...";
     http.open("GET", url+"?"+params, true);
     http.onreadystatechange = function() {//Call a function when the state changes.

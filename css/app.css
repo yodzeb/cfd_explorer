@@ -18,4 +18,5 @@ bottom: .5em;
 #map {
     height: 100%;
     weight: 100%;
+    z-index: 1;
 }
