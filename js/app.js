@@ -146,8 +146,17 @@ function get_cfd_page(params) {
 	if(http.readyState == 4) {
 	    document.getElementById("loading").innerHTML = "";
 	    if (http.status == 200) {
+		var data = JSON.parse(http.responseText)
 		//console.log(http.responseText);
-		convert_data(JSON.parse(http.responseText));
+		if (data["pilots"] && Object.keys(data["pilots"]).length > 0) {
+		    convert_data(data);
+		}
+		else {
+		    document.getElementById("loading").innerHTML = "Pas de resultat";
+		}
+	    }
+	    else {
+		document.getElementById("loading").innerHTML = "Une erreur s'est produite";
 	    }
 	}
     }
@@ -186,19 +195,7 @@ function convert_data(data) {
 	lines.push(poly);
 	id = id+1;
     }
-    /*
-    sum = "<div onclick=reinit_pilot()>All ( Vols / Total / Max / Moy)</div>";
-    all_pilots = [];
-    var id=0;
-    for (p in data["pilots"]) {
-	sum += '<div onmouseover="select_pilot('+id+')" onmouseout="reinit_pilot()" onclick="select_pilot('+id+')" ondblclick="submit_post('+id+')"><span  style="background-color:'+stringToColour(p)+'">&nbsp;&nbsp;&nbsp;</span>&nbsp;';
-	sum += p+" (";
-	sum += data["pilots"][p]["flights"]+" / "+data["pilots"][p]["sum"]+" / "+data["pilots"][p]["max"]+" / "+data["pilots"][p]["avg"]+" )</div>";
-	all_pilots.push(p);
-	id+=1;
-    }
-    */
-    sum = "<a href='javascript:reinit_pilot()' onmouseover='javascript:reinit_pilot()'>Voir tous</a><table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>Pilotes</th><th class='th-sm'>Vols</th><th class='th-sm'>Tot</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
+    sum = "<a href='javascript:reinit_pilot()' onmouseover='javascript:reinit_pilot()'>Voir tous les "+data["raw_flights"].length+" vols des "+Object.keys(data["pilots"]).length+" pilotes</a><table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>Pilotes</th><th class='th-sm'>Vols</th><th class='th-sm'>Tot</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
     all_pilots = [];
     var id=0;
     for (p in data["pilots"]) {
