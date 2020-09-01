@@ -1,8 +1,10 @@
 var popup;
 var map;
+var poly_res = [];
 var years=[];
 var clubs=[];
 var clubs_names=[];
+var all_flights=[];
 
 function load_clubs () {
     //var json = require('ressources/clubs.json');
@@ -110,17 +112,23 @@ function convertCoord(c) {
     return c;
 }
 
-function convert_date(d) {
+function convert_date(d, sep, rev) {
     let month = String(d.getMonth() + 1);
     let day = String(d.getDate());
     const year = String(d.getFullYear());
 
     if (month.length < 2) month = '0' + month;
     if (day.length < 2) day = '0' + day;
-    console.log(day+"/"+month+"/"+year);
-    return day+"/"+month+"/"+year;
-    
+    console.log(day+sep+month+sep+year);
+    if (rev) {
+	return year+sep+month+sep+day;
+    }
+    else {
+	return day+sep+month+sep+year;
+    }    
 }
+
+
 
 function days_ago(days) {
     var d = new Date();
@@ -128,8 +136,8 @@ function days_ago(days) {
     
     d2.setDate(d.getDate() - days);
     console.log(d);    
-    d = convert_date(d);
-    d2 = convert_date(d2);
+    d = convert_date(d,"/");
+    d2 = convert_date(d2,"/");
     load_flights(d2,d);    
 }
 
@@ -206,6 +214,7 @@ function convert_data(data) {
     var avg_lng = 0;
     var id = 0;
     var count = 0;
+    all_flights = data['raw_flights'];
     
     for (f in data['raw_flights']) {
 	var poline2 = [];
@@ -253,7 +262,6 @@ function convert_data(data) {
     display_map(lines, avg_lat, avg_lng, sum);
 }
 
-var poly_res = [];
 function on_Click(e) {
     console.log (e);
     
@@ -265,9 +273,11 @@ function on_Click(e) {
 	    var pilot = poly_res[l]["pilot"];
 	    var date = poly_res[l]["date"];
 	    console.log (poly_res[l]);
+	    content = poly_res[l]["pilot"]+", "+poly_res[l]["km"]+" km le "+date+" <br><a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a><br>";
+	    content += "<a href='javascript:pressure_display(\""+date+"\")'>MTO</a>";
 	    popup = L.popup()
 		.setLatLng([e['latlng']["lat"], e['latlng']["lng"] ])
-		.setContent(poly_res[l]["pilot"]+", "+poly_res[l]["km"]+" km le "+date+" <a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a>")
+	    	.setContent(content)
 		.openOn(map);
 	    
 	}
@@ -301,8 +311,72 @@ function set_pilot_table() {
     $('.dataTables_length').addClass('bs-select');
 };
 
+var overlay_pressure = undefined;
+var pressure = false;
+
+function get_median_date () {
+    var count = 0;
+    var sum = 0;
+    for (f in all_flights) {
+	fd = all_flights[f]['date'];
+	
+	match = fd.match(/(\d+)\/(\d+)\/(\d+)/)
+	if (match.length > 1) {
+	    year = match[3];
+	    month = match[2];
+	    day = match[1];
+	    var d = new Date(year+'-'+month+'-'+day);
+	    sum += d.getTime();
+	    console.log (all_flights[f]);
+	    count += 1;
+
+	}
+    }
+    if (count > 0)
+	sum /= count;
+    if (!sum)
+	sum=Date.now();
+    res = new Date(sum);
+    console.log(res);
+    return res;
+}
+
+function to_date_obj (d) {
+    console.log (d);
+    var out = undefined;
+    match = d.match(/(\d+)\/(\d+)\/(\d+)/)
+    if (match.length > 1) {
+	year = match[3];
+	month = match[2];
+	day = match[1];
+	var out = new Date(year+'-'+month+'-'+day);
+	console.log ("got date");
+	console.log(d);
+    }
+    return out;
+}
+
+function pressure_display(the_date) {
+    if (overlay_pressure != undefined && pressure )
+	map.removeLayer(overlay_pressure);
+    pressure = !(pressure);
+    if (pressure) {
+	if (the_date == undefined)
+	    date = get_median_date();
+	else {
+	    date = to_date_obj(the_date);
+	}
+	p_url = "https://www.meteociel.fr/cartes_obs/archives/01-08-2020/pression2_eur2-17.png";
+	p_url = "https://modeles.meteociel.fr/modeles/reana-era/"+date.getFullYear()+"/archives-"+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+"-0-0.png";
+	p_url = "https://modeles.meteociel.fr/modeles/gfs/archives/gfs-2020033100-0-6.png";
+	p_url = "https://modeles.meteociel.fr/modeles/gfs/archives/gfs-"+convert_date(date,"", true)+"00-0-12.png";
+	overlay_pressure = L.imageOverlay(p_url, [[70.5,-60], [23, 39]], {opacity: 0.5, autoZIndex: true});
+	overlay_pressure.addTo(map)
+    };    
+}
 
 function display_map (lines, x, y, sum) {
+    pressure = false;
     if (lines.length == 0 )
 	return;
     // initialize Leaflet
@@ -321,6 +395,7 @@ function display_map (lines, x, y, sum) {
 	opacity: 0.5,
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     }).addTo(map);
+
     
     L.control.scale().addTo(map);
 
@@ -427,4 +502,8 @@ function submit_post(pilot, date) {
 
     f.submit();
     f.remove();
+}
+
+function pressure() {
+    
 }
