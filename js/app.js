@@ -19,6 +19,14 @@ function load_clubs () {
 
 $(document).ready(function () {
     load_clubs();
+    if(window.location.hash) {
+    	var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
+	if (hash == "last")
+	    days_ago(15);
+	else if (hash == "last2") {
+	    days_ago(2);
+	}
+    }
 });
 
 
@@ -102,7 +110,30 @@ function convertCoord(c) {
     return c;
 }
 
-function load_flights(/*name, club*/) {
+function convert_date(d) {
+    let month = String(d.getMonth() + 1);
+    let day = String(d.getDate());
+    const year = String(d.getFullYear());
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    console.log(day+"/"+month+"/"+year);
+    return day+"/"+month+"/"+year;
+    
+}
+
+function days_ago(days) {
+    var d = new Date();
+    var d2= new Date();
+    
+    d2.setDate(d.getDate() - days);
+    console.log(d);    
+    d = convert_date(d);
+    d2 = convert_date(d2);
+    load_flights(d2,d);    
+}
+
+function load_flights(start, end) {
     var name = document.getElementById("pilot_name").value;
     //var club = document.getElementById("pilot_club").value;
     var surname = document.getElementById("pilot_surname").value;
@@ -114,12 +145,14 @@ function load_flights(/*name, club*/) {
 	"season": season,
 	"surname": surname,
 	"name": name,
+	"date_start": start,
+	"date_end": end,
 	//"club": club,
 	"club_name": club_name,
 	"bi"  : biplace,
 	"dept": dept
     };
-    get_cfd_page(params)
+    get_cfd_page(params);
 }
 
 function lookup_club_id(club_name) {
@@ -139,9 +172,13 @@ function get_cfd_page(params) {
     var http = new XMLHttpRequest();
     var url = "cgi/get_xls.php";
     var club_id = lookup_club_id(params["club_name"]);
-    var params = "name="+params["name"]+"&club="+params["club_name"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"")+"&dept="+params["dept"];//+"&club_id="+club_id;
+    console.log(params);
+    var get_params = "name="+params["name"]+"&club="+params["club_name"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"")+"&dept="+params["dept"];
+    get_params += "&date_start="+params["date_start"]+"&date_end="+params["date_end"];
+    
+    //+"&club_id="+club_id;
     document.getElementById("loading").innerHTML = "Chargement en cours...";
-    http.open("GET", url+"?"+params, true);
+    http.open("GET", url+"?"+get_params, true);
     http.onreadystatechange = function() {//Call a function when the state changes.
 	if(http.readyState == 4) {
 	    document.getElementById("loading").innerHTML = "";
@@ -375,7 +412,7 @@ function submit_post(pilot, date) {
 	"1650-1-1"  : date,
 	"1650-1-2"  : date,
 	"1650-1-6"  : "",
-	"1650-1-14[1]": (biplace?"1":"0"),
+	"1650-1-14[1]": (biplace==true?"1":"0"),
 	
 	"form_id" : "requete_filtre_form"
     }

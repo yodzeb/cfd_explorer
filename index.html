@@ -37,7 +37,7 @@
     <div class="container-fluid  h-100 w-100 mx-0">
       <div class="col  h-100 w-100 mw-90">
 	<div class="row">
-	  <form action="javascript:load_flights()">
+	  <form action="javascript:load_flights('','')">
 	    <div class="form-row">
 	      <div class="col"><input class="form-control" placeholder="Prenom" type="text"     name="pilot_surname" size="10" id="pilot_surname"/></div>
 	      <div class="col"><input class="form-control" placeholder="Nom" type="text" name="pilot_name" size="10" id="pilot_name"/></div>
@@ -57,13 +57,21 @@
 
 	      <div class="col">
 		<div class="custom-control custom-checkbox mr-sm-2">
-		  <input class="custom-control-input"  type="checkbox" name="pilot_bi"  id="pilot_bi"/>
+		  <input class="custom-control-input" type="checkbox" name="pilot_bi"  id="pilot_bi"/>
 		  <label class="custom-control-label" for="pilot_bi">Biplace</label>
 		</div>
 	      </div>
 	      <div class="col">
 		<input type="submit" value="Rechercher les vols"/>
 	      </div>
+	      <div class="col">
+		<input type="button" value="2j" class="btn btn-primary" onclick="days_ago(1)"/>
+		<input type="button" value="15j" class="btn btn-primary" onclick="days_ago(15)"/>
+	      </div>
+	      <div class="col">
+
+	      </div>
+	      
 	      <div class="col">
 	      </div>
 	      <span id="loading"></span>
