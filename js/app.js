@@ -374,7 +374,7 @@ function pressure_display(the_date) {
 	p_url = "cgi/get_pressure.php?dt="+convert_date(date,"", true);
 	
 	//overlay_pressure = L.imageOverlay(p_url, [[70.5,-60], [23, 39]], {opacity: 0.5, autoZIndex: true});
-	overlay_pressure = L.imageOverlay(p_url, [[80,-61], [25.5, 39]], {opacity: 0.5, autoZIndex: true});
+	overlay_pressure = L.imageOverlay(p_url, [[80,-60], [25.5, 39]], {opacity: 0.5, autoZIndex: true});
 	overlay_pressure.addTo(map)
     };    
 }
