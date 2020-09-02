@@ -14,6 +14,11 @@ Some PHP dependencies:
 - php7.0-xml
 - php7.0-opcache
 
+Some other binaries:
+- gdal-bin
+- curl
+- imagemagick
+
 ## Installation guide
 You'll figure it out.
 
