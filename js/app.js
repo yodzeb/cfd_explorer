@@ -350,8 +350,6 @@ function to_date_obj (d) {
 	month = match[2];
 	day = match[1];
 	var out = new Date(year+'-'+month+'-'+day);
-	console.log ("got date");
-	console.log(d);
     }
     return out;
 }
@@ -366,11 +364,17 @@ function pressure_display(the_date) {
 	else {
 	    date = to_date_obj(the_date);
 	}
+	/*
 	p_url = "https://www.meteociel.fr/cartes_obs/archives/01-08-2020/pression2_eur2-17.png";
 	p_url = "https://modeles.meteociel.fr/modeles/reana-era/"+date.getFullYear()+"/archives-"+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+"-0-0.png";
 	p_url = "https://modeles.meteociel.fr/modeles/gfs/archives/gfs-2020033100-0-6.png";
 	p_url = "https://modeles.meteociel.fr/modeles/gfs/archives/gfs-"+convert_date(date,"", true)+"00-0-12.png";
-	overlay_pressure = L.imageOverlay(p_url, [[70.5,-60], [23, 39]], {opacity: 0.5, autoZIndex: true});
+	p_url = "/cfd/tmp/out.png";
+	*/
+	p_url = "cgi/get_pressure.php?dt="+convert_date(date,"", true);
+	
+	//overlay_pressure = L.imageOverlay(p_url, [[70.5,-60], [23, 39]], {opacity: 0.5, autoZIndex: true});
+	overlay_pressure = L.imageOverlay(p_url, [[80,-61], [25.5, 39]], {opacity: 0.5, autoZIndex: true});
 	overlay_pressure.addTo(map)
     };    
 }
@@ -386,7 +390,13 @@ function display_map (lines, x, y, sum) {
 	map.remove();
     }
     document.getElementById("map").innerHTML ="";
-    map = L.map('map').setView({lon: y, lat: x}, 5);
+    map = L.map('map', { crs:L.CRS.EPSG3857 }).setView(
+	{
+	    lon: y,
+	    lat: x
+	},
+	5
+    );
     //L.tileLayer.provider('OpenTopoMap').addTo(map);
     
     // add the OpenStreetMap tiles
