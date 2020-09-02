@@ -22,7 +22,10 @@ if ($dt != "") {
     exec("curl -s https://modeles.meteociel.fr/modeles/gfs/archives/gfs-".$dt."00-0-12.png | convert - tif:$file_in ; gdal_translate -of GTiff -a_ullr -61 80 39 25.5 -a_srs EPSG:4269 $file_in $file_imed 2> /dev/null");
     exec("gdalwarp -t_srs EPSG:3857 $file_imed $file_out ");
     passthru("convert tif:$file_out png:-");
-    exit();    
+    exec ("rm -f $file_in $file_imed $file_out");
+    exit();
+
+    
     $cmd = "curl -s https://modeles.meteociel.fr/modeles/gfs/archives/gfs-".$dt."00-0-12.png | gdal_translate -of GTiff -a_ullr -61 80 39 25.5 -a_srs EPSG:4269 /vsistdin/ /vsistdout/ | gdalwarp -t_srs EPSG:3857 /vsistdin/ /vsistdout/ | convert - png:-";
     # error handling ? not interesting.
     passthru($cmd);
