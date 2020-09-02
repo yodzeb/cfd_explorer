@@ -141,14 +141,17 @@ function days_ago(days) {
     load_flights(d2,d);    
 }
 
-function load_flights(start, end) {
-    var name = document.getElementById("pilot_name").value;
-    //var club = document.getElementById("pilot_club").value;
-    var surname = document.getElementById("pilot_surname").value;
-    var season  = document.getElementById("season").value;
-    var biplace = document.getElementById("pilot_bi").checked;
-    var dept    = document.getElementById("pilot_dept").value;
-    var club_name = document.getElementById("club_name").value;
+function load_flights(start, end, date_only) {
+    var name="",surname="",season="",biplace="",dept="",club_name="";
+    if (!date_only) {
+	//var club = document.getElementById("pilot_club").value;
+	name = document.getElementById("pilot_name").value;
+	surname = document.getElementById("pilot_surname").value;
+	season  = document.getElementById("season").value;
+	biplace = document.getElementById("pilot_bi").checked;
+	dept    = document.getElementById("pilot_dept").value;
+	club_name = document.getElementById("club_name").value;
+    }
     var params = {
 	"season": season,
 	"surname": surname,
@@ -274,7 +277,8 @@ function on_Click(e) {
 	    var date = poly_res[l]["date"];
 	    console.log (poly_res[l]);
 	    content = poly_res[l]["pilot"]+", "+poly_res[l]["km"]+" km le "+date+" <br><a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a><br>";
-	    content += "<a href='javascript:pressure_display(\""+date+"\")'>MTO</a>";
+	    content += "<a href='javascript:pressure_display(\""+date+"\")'>MTO</a><br>";
+	    content += "<a href='javascript:load_flights(convert_date(to_date_obj(\""+date+"\"), \"/\"), convert_date(to_date_obj(\""+date+"\"), \"/\"), true)'>Vols du jour</a><br>";
 	    popup = L.popup()
 		.setLatLng([e['latlng']["lat"], e['latlng']["lng"] ])
 	    	.setContent(content)
