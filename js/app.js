@@ -276,7 +276,9 @@ function on_Click(e) {
 	    var pilot = poly_res[l]["pilot"];
 	    var date = poly_res[l]["date"];
 	    console.log (poly_res[l]);
-	    content = poly_res[l]["pilot"]+", "+poly_res[l]["km"]+" km le "+date+" <br><a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a><br>";
+	    content = poly_res[l]["pilot"]+", "+poly_res[l]["km"]+" km le "+date+" <br>";
+	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a> / ";
+	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"', true)\">VisuGPS</a><br>";
 	    content += "<a href='javascript:pressure_display(\""+date+"\")'>MTO</a><br>";
 	    content += "<a href='javascript:load_flights(convert_date(to_date_obj(\""+date+"\"), \"/\"), convert_date(to_date_obj(\""+date+"\"), \"/\"), true)'>Vols du jour</a><br>";
 	    popup = L.popup()
@@ -460,16 +462,22 @@ function reinit_pilot() {
     }
 }
 
-function goto_flight(pilot, date) {
+function goto_flight(pilot, date, direct) {
     var http = new XMLHttpRequest();
     var url = "cgi/get_link.php";
     var params = "name="+pilot+"&date="+date;
+    if (direct) {
+	params += "&direct=1";
+    }
     http.open("GET", url+"?"+params, true);
     http.onreadystatechange = function() {//Call a function when the state changes.
 	if(http.readyState == 4 && http.status == 200) {
 	    console.log(http.responseText);
 	    if (http.responseText.match(/^\d+$/) ){
 		window.open("https://parapente.ffvl.fr/cfd/liste/vol/"+http.responseText,'_blank');
+	    }
+	    else if (direct) {
+		window.open("https://flyxc.app/?track=https://parapente.ffvl.fr"+http.responseText,'_blank');
 	    }
 	}
     }

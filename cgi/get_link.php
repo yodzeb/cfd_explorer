@@ -40,7 +40,16 @@ if( preg_match ('#a href="https:\/\/parapente.ffvl.fr\/cfd\/liste\/vol\/(\d+)[^\
     #header('Content-Type: application/json');
     header('Access-Control-Allow-Origin: *');
 
-    echo $matches[1][0]; #var_dump($matches);
+    if (array_key_exists('direct', $_GET) && $_GET['direct'] == 1) {
+        # get igc file
+        $flight_page=file_get_contents("https://parapente.ffvl.fr/cfd/liste/vol/".$matches[1][0]);
+        if( preg_match ('#<a href="(/sites/parapente.ffvl.fr/files/igcfiles/[\d\-]+igcfile[\d\-]+.igc)">IGC \(fichier original\)</a>#s', $flight_page, $matches2, PREG_OFFSET_CAPTURE) ){
+            echo $matches2[1][0];
+        }
+    }
+    else {
+        echo $matches[1][0]; #var_dump($matches);
+    }
 }
 else {
     header('Access-Control-Allow-Origin: *');
