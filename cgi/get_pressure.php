@@ -25,7 +25,6 @@ if ($dt != "") {
     /* passthru("convert tif:$file_out png:-"); */
     /* exec ("rm -f $file_in $file_imed $file_out"); */
     /* exit(); */
-
     
     $cmd = "curl -s https://modeles.meteociel.fr/modeles/gfs/archives/gfs-".$dt."00-0-12.png | gdal_translate -of GTiff -a_ullr -60 80 39 25.5 -a_srs EPSG:4269 /vsistdin/ /vsistdout/ | gdalwarp -t_srs EPSG:3857 /vsistdin/ /vsistdout/ | convert - png:-";
     # error handling ? not interesting.

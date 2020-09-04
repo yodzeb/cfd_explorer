@@ -425,7 +425,7 @@ function display_map (lines, x, y, sum) {
 	}
 	if (discard == false) {
 	    var text     = lines[l]["km"]+" km le "+lines[l]["date"]+" - "+lines[l]['pilot']+' (click!)';
-	    var polyline = L.polyline(lines[l]['line'], {weight:4,color: stringToColour(lines[l]["pilot"])/*'red'*/}).bindTooltip(text).on('click', on_Click);
+	    var polyline = L.polyline(lines[l]['line'], {weight:5,color: stringToColour(lines[l]["pilot"])/*'red'*/}).bindTooltip(text).on('click', on_Click);
 	    poly_res.push({"poly": polyline, "pilot": lines[l]['pilot'], "display": true, "date": lines[l]['date'], "km": lines[l]['km'] }); 
 	    polyline.addTo(map);
 	}
