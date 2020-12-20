@@ -42,7 +42,12 @@ function range(start, end, step) {
 
 function load() {
     var x = document.getElementById("season");
-    r = range((new Date()).getFullYear()-1, 1999,-1);
+    var today = new Date();
+    year = today.getFullYear()-1;
+    if (today.getMonth() >= 8)
+	year = year + 1;
+    r = range(year, 1999,-1);
+    
     for (i in r) {
 	v=r[i]
 	var option = document.createElement("option");
