@@ -12,8 +12,10 @@ if (array_key_exists('dt', $_GET) && preg_match('#^\d{8}$#', $_GET['dt'])) {
 if ($dt != "") {
     #echo "aaa";
     #echo "curl -s https://modeles.meteociel.fr/modeles/gfs/archives/gfs-".$dt."00-0-12.png | gdal_translate -of GTiff -a_ullr -61 80 39 25.5 -a_srs EPSG:4269 /vsistdin/ $file_imed";
-    header('Content-Type: image/png');
+    
+    #header('Content-Type: image/png');
     header('Access-Control-Allow-Origin: *');
+    header('Content-type: image/png');
     #exit();
 
     ## Version w/ temp files
@@ -25,8 +27,25 @@ if ($dt != "") {
     /* passthru("convert tif:$file_out png:-"); */
     /* exec ("rm -f $file_in $file_imed $file_out"); */
     /* exit(); */
+
+    $url = "https://modeles.meteociel.fr";
+    if (array_key_exists('param', $_GET) && preg_match('#^pressure$#', $_GET['param'])) {
+        $url.="/modeles/gfs/archives/gfs-".$dt."00-0-12.png";
+    }
+    else if (array_key_exists('param', $_GET) && preg_match('#^wind10$#', $_GET['param'])) {
+        # https://modeles.meteociel.fr/modeles/reana-era/2018/archives-2018-3-31-0-6.png
+        $year = substr($dt, 0, 4);
+        $month = (int)substr($dt, 4, 2);
+        $day   = (int)substr($dt, 6, 2);
+        $url .= "/modeles/reana-era/".$year."/archives-".$year."-".$month."-".$day."-18-6.png";
+    }
+    else {
+        $url.="/modeles/gfs/archives/gfs-".$dt."00-0-12.png";
+    }
+
     
-    $cmd = "curl -s https://modeles.meteociel.fr/modeles/gfs/archives/gfs-".$dt."00-0-12.png | gdal_translate -of GTiff -a_ullr -60 80 39 25.5 -a_srs EPSG:4269 /vsistdin/ /vsistdout/ | gdalwarp -t_srs EPSG:3857 /vsistdin/ /vsistdout/ | convert - png:-";
+    #$cmd = "curl -s https://modeles.meteociel.fr/modeles/gfs/archives/gfs-".$dt."00-0-12.png | gdal_translate -of GTiff -a_ullr -60 80 39 25.5 -a_srs EPSG:4269 /vsistdin/ /vsistdout/ | gdalwarp -t_srs EPSG:3857 /vsistdin/ /vsistdout/ | convert - png:-";
+    $cmd = "curl -s $url | gdal_translate -of GTiff -a_ullr -60 80 39 25.5 -a_srs EPSG:4269 /vsistdin/ /vsistdout/ | gdalwarp -t_srs EPSG:3857 /vsistdin/ /vsistdout/ | convert - png:-";
     # error handling ? not interesting.
     passthru($cmd);
 }
