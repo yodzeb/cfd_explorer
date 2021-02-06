@@ -36,3 +36,4 @@ CFD output format of '/cfd/selectionner-les-vols' is just horrible:
 
 ### GUI
 GUI might be buggy sometimes
+
