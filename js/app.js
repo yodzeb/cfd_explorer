@@ -244,6 +244,8 @@ function convert_data(data) {
 		 'pilot': data['raw_flights'][f]['pilot'],
 		 'date' : data['raw_flights'][f]['date'],
 		 "km"   : data['raw_flights'][f]['km'],
+		 "BA"   : data['raw_flights'][f]['BA'],
+		 "BD"   : data['raw_flights'][f]['BD'],
 	       }
 	//lines.push(poline2);
 	lines.push(poly);
@@ -282,6 +284,8 @@ function on_Click(e) {
 	    var date = poly_res[l]["date"];
 	    console.log (poly_res[l]);
 	    content = poly_res[l]["pilot"]+", "+poly_res[l]["km"]+" km le "+date+" <br>";
+	    content += "D&eacute;co: "+poly_res[l]["BD"]+"<br>";
+	    content += "Attero: "+poly_res[l]["BA"]+"<br>";
 	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a> / ";
 	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"', true)\">VisuGPS</a><br>";
 	    content += "<a href='javascript:pressure_display(\""+date+"\")'>MTO</a><br>";
@@ -431,7 +435,7 @@ function display_map (lines, x, y, sum) {
 	if (discard == false) {
 	    var text     = lines[l]["km"]+" km le "+lines[l]["date"]+" - "+lines[l]['pilot']+' (click!)';
 	    var polyline = L.polyline(lines[l]['line'], {weight:5,color: stringToColour(lines[l]["pilot"])/*'red'*/}).bindTooltip(text).on('click', on_Click);
-	    poly_res.push({"poly": polyline, "pilot": lines[l]['pilot'], "display": true, "date": lines[l]['date'], "km": lines[l]['km'] }); 
+	    poly_res.push({"poly": polyline, "pilot": lines[l]['pilot'], "display": true, "date": lines[l]['date'], "km": lines[l]['km'], "BA":lines[l]['BA'], "BD":lines[l]['BD'] }); 
 	    polyline.addTo(map);
 	}
 	else {
