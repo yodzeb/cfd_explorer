@@ -1,3 +1,5 @@
+//test
+
 var popup;
 var map;
 var poly_res = [];
@@ -424,7 +426,6 @@ function display_map (lines, x, y, sum) {
     
     L.control.scale().addTo(map);
 
-    
     var id = 0;
     for (l in lines ) {
 	//console.log (lines[l]);
