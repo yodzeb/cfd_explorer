@@ -148,6 +148,25 @@ function days_ago(days) {
     load_flights(d2,d);    
 }
 
+function load_flights_pilot(pilot) {
+    // names are capitals
+    var matches=pilot.match(/([A-Z][a-z\s]+)\s+([A-Z\s]{2,})/);
+    console.log(matches);
+    if (Array.isArray(matches) && matches.length > 1) {
+	var params = {
+	    "surname" : matches[1],
+	    "name"    : matches[2],
+	    "season"  : "",
+	    "club_name": "",
+	    "dept": "",
+	    "date_start": "",
+	    "date_end": "",
+	    "bi": ""
+	};
+	get_cfd_page(params);
+    }
+}
+
 function load_flights(start, end, date_only) {
     var name="",surname="",season="",biplace="",dept="",club_name="";
     if (!date_only) {
@@ -292,7 +311,8 @@ function on_Click(e) {
 	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"', true)\">VisuGPS</a><br>";
 	    content += "<a href='javascript:pressure_display(\""+date+"\")'>Pressure</a> / ";
 	    content += "<a href='javascript:pressure_display(\""+date+"\", \"wind10\")'>Wind 10m</a> <br> ";
-	    content += "<a href='javascript:load_flights(convert_date(to_date_obj(\""+date+"\"), \"/\"), convert_date(to_date_obj(\""+date+"\"), \"/\"), true)'>Vols du jour</a><br>";
+	    content += "<a href='javascript:load_flights(convert_date(to_date_obj(\""+date+"\"), \"/\"), convert_date(to_date_obj(\""+date+"\"), \"/\"), true)'>Vols du jour</a> / ";
+	    content += "<a href='javascript:load_flights_pilot(\""+pilot+"\")'>Vols du pilote</a><br>";
 	    popup = L.popup()
 		.setLatLng([e['latlng']["lat"], e['latlng']["lng"] ])
 	    	.setContent(content)
