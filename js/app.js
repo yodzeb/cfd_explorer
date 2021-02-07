@@ -290,7 +290,8 @@ function on_Click(e) {
 	    content += "Attero: "+poly_res[l]["BA"]+"<br>";
 	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a> / ";
 	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"', true)\">VisuGPS</a><br>";
-	    content += "<a href='javascript:pressure_display(\""+date+"\")'>MTO</a><br>";
+	    content += "<a href='javascript:pressure_display(\""+date+"\")'>Pressure</a> / ";
+	    content += "<a href='javascript:pressure_display(\""+date+"\", \"wind10\")'>Wind 10m</a> <br> ";
 	    content += "<a href='javascript:load_flights(convert_date(to_date_obj(\""+date+"\"), \"/\"), convert_date(to_date_obj(\""+date+"\"), \"/\"), true)'>Vols du jour</a><br>";
 	    popup = L.popup()
 		.setLatLng([e['latlng']["lat"], e['latlng']["lng"] ])
@@ -371,7 +372,10 @@ function to_date_obj (d) {
     return out;
 }
 
-function pressure_display(the_date) {
+function pressure_display(the_date, variable) {
+    p = "pressure";
+    if (variable)
+	p = variable;
     if (overlay_pressure != undefined && pressure )
 	map.removeLayer(overlay_pressure);
     pressure = !(pressure);
@@ -381,14 +385,7 @@ function pressure_display(the_date) {
 	else {
 	    date = to_date_obj(the_date);
 	}
-	/*
-	p_url = "https://www.meteociel.fr/cartes_obs/archives/01-08-2020/pression2_eur2-17.png";
-	p_url = "https://modeles.meteociel.fr/modeles/reana-era/"+date.getFullYear()+"/archives-"+date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+"-0-0.png";
-	p_url = "https://modeles.meteociel.fr/modeles/gfs/archives/gfs-2020033100-0-6.png";
-	p_url = "https://modeles.meteociel.fr/modeles/gfs/archives/gfs-"+convert_date(date,"", true)+"00-0-12.png";
-	p_url = "/cfd/tmp/out.png";
-	*/
-	p_url = "cgi/get_pressure.php?dt="+convert_date(date,"", true);
+	p_url = "cgi/get_pressure.php?dt="+convert_date(date,"", true)+"&param="+p;
 	
 	//overlay_pressure = L.imageOverlay(p_url, [[70.5,-60], [23, 39]], {opacity: 0.5, autoZIndex: true});
 	overlay_pressure = L.imageOverlay(p_url, [[80,-60], [25.5, 39]], {opacity: 0.5, autoZIndex: true});
