@@ -30,14 +30,34 @@ class Test(unittest.TestCase):
 
     def test_fullpage_screenshot(self):
         ''' Generate document-height screenshot '''
-        #url = "http://effbot.org/imagingbook/introduction.htm"
-        url = "http://www.w3schools.com/js/default.asp"
-        url = "http://cfd.wiro.fr/?noform=1#last"
+        url = "http://cfd.wiro.fr/?noform=1#last0"
         self.driver.get(url)
         time.sleep(15)
         util.fullpage_screenshot(self.driver, "test.png")
 
+        
+def do_screen():
+    #unittest.main()
+    display = Display(visible=0, size=(1280, 1024))
+    display.start()
+    service_log_path = "chromedriver.log"
+    service_args = ['--verbose']
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument('--no-sandbox')
+    chrome_options.add_argument('--window-size=1280,1024')
+    chrome_options.add_argument('--headless')
+    chrome_options.add_argument('--disable-gpu')
+    
+    driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver",
+                                   service_args=service_args,
+                                   service_log_path=service_log_path,
+                                   chrome_options=chrome_options)
+    url = "http://cfd.wiro.fr/?noform=1#last0"
+    driver.get(url)
+    time.sleep(15)
+    util.fullpage_screenshot(driver, "test.png")
 
+    
 if __name__ == "__main__":
-    unittest.main(argv=[sys.argv[0]])
+    unittest.main()#argv=[sys.argv[0]])
 

@@ -1,0 +1,5 @@
+tweepy
+configparser
+requests
+selenium
+pyvirtualdisplay

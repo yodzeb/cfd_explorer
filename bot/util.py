@@ -1,4 +1,5 @@
 from PIL import Image
+import time
 
 def fullpage_screenshot(driver, file):
 
