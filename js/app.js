@@ -54,8 +54,11 @@ $(document).ready(function () {
 	    days_ago(0);
 	}
     }
-    if (findGetParameter("noform") == "1")
+    if (findGetParameter("noform") == "1") {
 	$("#form-query").addClass('d-none');
+	form_displayed = false;
+    }
+    
 });
 
 
@@ -471,7 +474,10 @@ function display_map (lines, x, y, sum, zoom, bounds) {
 	},
 	zoom
     );
-    map.flyToBounds(bounds);
+    if (form_displayed)
+	map.flyToBounds(bounds);
+    else
+	map.fitBounds(bounds);
     
     
     // add the OpenStreetMap tiles
