@@ -79,10 +79,11 @@ function parse_html($matches, &$response, $surname, $name) {
     foreach ($dpt_stats as $d => $v) {
         $response['stats']['top_dpt'] .= "$d (".$v."kms), ";
         if ($i++ == 2) {
-            $response['stats']['top_dpt']=substr($response['stats']['top_dpt'], 0, -2);
             break ;
         }
-    }    
+    }
+    if ($i>0)
+        $response['stats']['top_dpt']=substr($response['stats']['top_dpt'], 0, -2);
 }
 
 function update_pilot(&$pilots, $pilot, $km) {
