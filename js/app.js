@@ -239,6 +239,7 @@ function get_cfd_page(params) {
 	    if (http.status == 200) {
 		var data = JSON.parse(http.responseText)
 		//console.log(http.responseText);
+		console.log("labla");
 		if (data["pilots"] && Object.keys(data["pilots"]).length > 0) {
 		    convert_data(data);
 		}
@@ -258,6 +259,10 @@ function convert_data(data) {
     var lines = [];
     var avg_lat = 0;
     var avg_lng = 0;
+    var lon_min = 200;
+    var lat_min = 200;
+    var lon_max = -200;
+    var lat_max = -200;
     var id = 0;
     var count = 0;
     all_flights = data['raw_flights'];
@@ -266,8 +271,14 @@ function convert_data(data) {
 	var poline2 = [];
 	//console.log ("BBB"+
 	if (convertCoord(data['raw_flights'][f]["lon BD"]) != 300) {
-	    avg_lng = avg_lng + convertCoord(data['raw_flights'][f]["lon BD"]);
-	    avg_lat = avg_lat + convertCoord(data['raw_flights'][f]["lat BD"]);
+	    lng = convertCoord(data['raw_flights'][f]["lon BD"]);
+	    lat = convertCoord(data['raw_flights'][f]["lat BD"]);
+	    avg_lng = avg_lng + lng;
+	    avg_lat = avg_lat + lat;
+	    if ( lat < lat_min) lat_min = lat;
+	    if ( lat > lat_max) lat_max = lat;
+	    if ( lng < lon_min) lon_min = lng;
+	    if ( lng > lon_max) lon_max = lng;
 	    count += 1;
 	}
 	
@@ -308,7 +319,10 @@ function convert_data(data) {
 	avg_lat = avg_lat / count;
 	avg_lng = avg_lng / count;
     }
-    display_map(lines, avg_lat, avg_lng, sum);
+    zoom = 5;
+    c2 = L.latLng(lat_max,lon_max);
+    c1 = L.latLng(lat_min,lon_min);
+    display_map(lines, avg_lat, avg_lng, sum, zoom, L.latLngBounds(c1, c2));
 }
 
 function on_Click(e) {
@@ -432,7 +446,7 @@ function pressure_display(the_date, variable) {
     };    
 }
 
-function display_map (lines, x, y, sum) {
+function display_map (lines, x, y, sum, zoom, bounds) {
     pressure = false;
     if (lines.length == 0 )
 	return;
@@ -448,9 +462,10 @@ function display_map (lines, x, y, sum) {
 	    lon: y,
 	    lat: x
 	},
-	5
+	zoom
     );
-    //L.tileLayer.provider('OpenTopoMap').addTo(map);
+    map.flyToBounds(bounds);
+    
     
     // add the OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {

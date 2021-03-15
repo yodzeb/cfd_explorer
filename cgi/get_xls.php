@@ -19,13 +19,17 @@ function myconvert ($val) {
 
 function parse_html($matches, &$response, $surname, $name) {
     #var_dump($matches);
+    error_log(print_r("mem: ".memory_get_usage() , TRUE));
     $id = 0;
     $flights = $response["raw_flights"]; #array();
     $pilots  = $response["pilots"]; #array();
     $dpt_stats = array();
+    $all_sum = 0;
+    $count = 0;
     #array_push($response['warnings'], $matches);
     foreach ($matches[0] as $v) {
         if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v[0])) {
+            $count ++;
             $pilot = $matches[10][$id][0];
             $km    = $matches[5][$id][0];
             $dpt   = utf8_encode ( $matches[7][$id][0]);
@@ -33,6 +37,7 @@ function parse_html($matches, &$response, $surname, $name) {
                 $dpt_stats[$dpt] = 0;
             $dpt_stats[$dpt]++;
             update_pilot($pilots, $pilot, $km);
+            $all_sum += $km;
             $flight = array(
                 "date"   => utf8_encode ( $matches[4][$id][0]),
                 "dpt"    => $dpt,
@@ -69,8 +74,13 @@ function parse_html($matches, &$response, $surname, $name) {
     $response['stats']       = array();
     asort($dpt_stats, SORT_NUMERIC );
     $dpt_stats = array_reverse($dpt_stats, 1);
-    $response['stats2']      = $dpt_stats;
+    $response['stats']['all'] = array(
+        "sum" => $all_sum,
+        "count"   => $count,
+        "avg"     => floor($all_sum / $count)
+    );
     $response['stats']['top_dpt'] = "";
+    
     $i=0;
     foreach ($dpt_stats as $d => $v) {
         $response['stats']['top_dpt'] .= "$d ($v), ";
@@ -283,8 +293,10 @@ function do_request($name, $club, $dept, $season, $biplace, $club_id, &$response
         array_push($response['warnings'], "Fecthing $url");
         $html_xls = file_get_contents($url, false);
         #echo $html_xls;
-        
+        error_log(print_r("mem_b: ".memory_get_usage() , TRUE));    
         if (preg_match_all($html_regex, $html_xls, $matches, PREG_OFFSET_CAPTURE)) {
+            $html_xls="";
+            error_log(print_r("len: ".strlen($html_regex) , TRUE));
             array_push($response['warnings'], "Parsing HTML");
             parse_html($matches, $response, $surname, $name);
             #file_put_contents ( "/tmp/bla_raw", $html_xls);
