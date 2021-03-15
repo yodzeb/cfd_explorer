@@ -275,14 +275,17 @@ function convert_data(data) {
 	var poline2 = [];
 	//console.log ("BBB"+
 	if (convertCoord(data['raw_flights'][f]["lon BD"]) != 300) {
-	    lng = convertCoord(data['raw_flights'][f]["lon B1"]);
-	    lat = convertCoord(data['raw_flights'][f]["lat B1"]);
-	    avg_lng = avg_lng + lng;
-	    avg_lat = avg_lat + lat;
-	    if ( lat < lat_min) lat_min = lat;
-	    if ( lat > lat_max) lat_max = lat;
-	    if ( lng < lon_min) lon_min = lng;
-	    if ( lng > lon_max) lon_max = lng;
+	    ["BD","B1","B2","B3","BA"].forEach(p => {
+		console.log (p);
+		lng = convertCoord(data['raw_flights'][f]["lon "+p]);
+		lat = convertCoord(data['raw_flights'][f]["lat "+p]);
+		avg_lng = avg_lng + lng;
+		avg_lat = avg_lat + lat;
+		if ( lat < lat_min) lat_min = lat;
+		if ( lat > lat_max) lat_max = lat;
+		if ( lng < lon_min) lon_min = lng;
+		if ( lng > lon_max) lon_max = lng;
+	    });
 	    count += 1;
 	}
 	
