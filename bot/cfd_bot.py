@@ -54,7 +54,7 @@ def get_data(ds, de, config):
         if ("stats" in data and "max" in data["stats"] and data["stats"]["all"]["sum"] > 0):
             text = chr(0x1F3C1)+str(data["stats"]["all"]["sum"])+" kilomètres en "+chr(0x1FA82)+" déclarés ce "+str(ds.day)+"/"+str(ds.month)+"/"+str(ds.year)+" à la CFD!\n"
             text+= "Top departements: "+str(data["stats"]["top_dpt"])+"\n"
-            name = re.sub('[\sA-Z]{2,}','',data["stats"]["max_name"])
+            name = re.sub('[\sA-Z\-]{3,}','',data["stats"]["max_name"])
             text+= chr(0x1F3C6)+" Bravo à "+name+" pour ses "+str(data["stats"]["max"])+" kms"
             m=data["stats"]["max"]
             if (m>400):

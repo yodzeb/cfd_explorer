@@ -24,7 +24,7 @@ def do_screen(ago):
                                    chrome_options=chrome_options)
     url = "http://cfd.wiro.fr/?noform=1&date="+str(ago)
     driver.get(url)
-    time.sleep(10)
+    time.sleep(30)
     util.fullpage_screenshot(driver, "test.png")
     display.stop()
 
