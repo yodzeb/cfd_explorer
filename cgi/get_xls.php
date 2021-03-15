@@ -203,10 +203,10 @@ function read_params() {
     if (array_key_exists("surname", $_GET) && preg_match('#^\w*$#', $surname))
         $surname = $_GET["surname"];
     if (array_key_exists("date_start", $_GET) && preg_match('#^[\d\/\-]+$#', $_GET["date_start"])) {
-        $date_start = str_replace("/","-",$_GET["date_start"]);
+        $date_start = str_replace("-","/",$_GET["date_start"]);
     }
     if (array_key_exists("date_end", $_GET) && preg_match('#^[\d\/\-]+$#', $_GET["date_end"])) {
-        $date_end = str_replace("/","-",$_GET["date_end"]);
+        $date_end = str_replace("-","/",$_GET["date_end"]);
     }
 }
 
