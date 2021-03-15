@@ -4,7 +4,7 @@ from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 import json
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta
 import configparser
 import requests
 from screenshot import do_screen
@@ -28,8 +28,8 @@ def read_config():
     return c
 
 def date_ago(ago):
-    tod = datetime.datetime.now()
-    d = datetime.timedelta(days = ago)
+    tod = datetime.now()
+    d = timedelta(days = ago)
     a = tod - d
     return (a.date())
 
@@ -91,18 +91,22 @@ def tweet(text, image, config):
 def tweet_days(ago, config):
     date_start = date_ago(ago)
     date_end = date_ago(0)
-    get_data(date_start, date_end, config, ago)
+    get_data(date_start, date_end, config)
+    sys.exit(0)
 
 def tweet_day(day, config):
     d=date_day(day)
     get_data(d,d,config)
+    sys.exit(0)
     
 if __name__ == '__main__':
     c=read_config()
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "d:m:", ["day=", "month="])
+        opts, args = getopt.getopt(sys.argv[1:], "td:m:", ["today", "day=", "month="])
         for o,a in opts:
             if (o in ("-d", "--day")):
                 tweet_day(a, c)
+            if (o in ("-t", "--today")):
+                tweet_days(0, c)
     except:
         tweet_days(0, c)

@@ -174,7 +174,7 @@ function days_ago(days) {
 
 function load_flights_pilot(pilot) {
     // names are capitals
-    var matches=pilot.match(/([A-Z][a-z\s\-]+)\s+([A-Z\s]{2,})/);
+    var matches=pilot.match(/([A-Z][a-z\s\-]+)\s+([A-Z\-\s]{3,})/);
     console.log(matches);
     if (Array.isArray(matches) && matches.length > 1) {
 	var params = {
