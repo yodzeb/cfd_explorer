@@ -36,7 +36,7 @@
   <body onload="load()"> 
     <div class="container-fluid  h-100 w-100 mx-0">
       <div class="col  h-100 w-100 mw-90">
-	<div class="row">
+	<div class="row"  id="form-query">
 	  <form action="javascript:load_flights('','')">
 	    <div class="form-row">
 	      <div class="col"><input class="form-control" placeholder="Prenom" type="text"     name="pilot_surname" size="10" id="pilot_surname"/></div>
@@ -62,10 +62,10 @@
 		</div>
 	      </div>
 	      <div class="col">
-		<input type="submit" value="Rechercher les vols"/>
+		<input type="button" class="btn btn-primary" value="Rechercher les vols" on-click="javascript:load_flights('','')"/>
 	      </div>
 	      <div class="col">
-		<input type="button" value="2j" class="btn btn-primary" onclick="days_ago(1)"/>
+		<input type="button" value="2j" class="btn btn-primary" onclick="days_ago(2)"/>
 		<input type="button" value="15j" class="btn btn-primary" onclick="days_ago(15)"/>
 	      </div>
 	      <div class="col">
@@ -81,8 +81,8 @@
 	  
 	
 	</div>
-	<div style="height: 95%;" class=" row flex-grow-1">
-	  <div class="col-sm-7 h-100">
+	<div style="height: 90%;" class=" row flex-grow-1">
+	  <div class="col-sm-7 h-80">
 	    <div id="map" class="" ><div class="col" style="text-align: center; margin-top: 50vh; transform: translateY(-50%); "><h2>Rechercher les vols par nom, prénom, club, departement ou saison</h2>
 
 		  Afin de limiter les resultats, selectionner au moins:<br/>Nom<br/>ou club<br/>ou departement+saison.

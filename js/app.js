@@ -8,6 +8,8 @@ var clubs=[];
 var clubs_names=[];
 var all_flights=[];
 
+var form_displayed = true;
+
 function load_clubs () {
     //var json = require('ressources/clubs.json');
     jQuery.getJSON("ressources/clubs.json", function(json) {
@@ -21,19 +23,36 @@ function load_clubs () {
     });
 }
 
+function findGetParameter(parameterName) {
+    var result = null,
+	tmp = [];
+    location.search
+        .substr(1)
+        .split("&")
+        .forEach(function (item) {
+	    tmp = item.split("=");
+	    if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+	});
+    return result;
+}
+
 $(document).ready(function () {
     load_clubs();
     if(window.location.hash) {
     	var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
 	if (hash == "last")
 	    days_ago(15);
-	else if (hash == "last2") {
-	    days_ago(2);
+	//else if (hash == "last2") {
+	else if (f=hash.match(/last([\d]+)/)) {
+	    days_ago(f[1]);
+	}
+	else if (hash == "today") {
+	    days_ago(0);
 	}
     }
+    if (findGetParameter("noform") == "1")
+	$("#form-query").addClass('d-none');
 });
-
-
 
 
 function range(start, end, step) {
@@ -57,7 +76,6 @@ function load() {
 	option.value= v;
 	x.add(option);
     }
-
 }
 
 var ExcelToJSON = function() {
@@ -134,7 +152,6 @@ function convert_date(d, sep, rev) {
 	return day+sep+month+sep+year;
     }    
 }
-
 
 
 function days_ago(days) {
@@ -272,7 +289,8 @@ function convert_data(data) {
 	lines.push(poly);
 	id = id+1;
     }
-    sum = "<a href='javascript:reinit_pilot()' onmouseover='javascript:reinit_pilot()'>Voir tous les "+data["raw_flights"].length+" vols des "+Object.keys(data["pilots"]).length+" pilotes</a><table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>Pilotes</th><th class='th-sm'>Vols</th><th class='th-sm'>Tot</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
+    sum = "<a href='javascript:reinit_pilot()' onmouseover='javascript:reinit_pilot()'>Voir tous les "+data["raw_flights"].length+" vols des "+Object.keys(data["pilots"]).length+" pilotes</a>";
+    sum += "<table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>Pilotes</th><th class='th-sm'>Vols</th><th class='th-sm'>Tot</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
     all_pilots = [];
     var id=0;
     for (p in data["pilots"]) {
@@ -337,14 +355,15 @@ var stringToColour = function(str) {
 
 function set_pilot_table() {
     $('#pilot_list').DataTable({
-	"pageLength": 15,
+	"pageLength": 10,
 	"columns": [
 	    { "type": "html" },
 	    { "type": "num-fmt" },
 	    { "type": "num-fmt" },
 	    { "type": "num-fmt" },
 	    { "type": "num-fmt" }
-	]
+	],
+	"order": [[ 3, "desc" ]]
     } );
     $('.dataTables_length').addClass('bs-select');
 };

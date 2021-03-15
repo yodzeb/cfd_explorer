@@ -2,6 +2,15 @@
 
 include "regex.php";
 
+if (!function_exists('array_key_first')) {
+    function array_key_first(array $arr) {
+        foreach($arr as $key => $unused) {
+            return $key;
+        }
+        return NULL;
+    }
+}
+
 function myconvert ($val) {
     $v = str_replace(",", ".", $val);
     $v = floatval($v);
@@ -13,14 +22,20 @@ function parse_html($matches, &$response, $surname, $name) {
     $id = 0;
     $flights = $response["raw_flights"]; #array();
     $pilots  = $response["pilots"]; #array();
+    $dpt_stats = array();
     #array_push($response['warnings'], $matches);
     foreach ($matches[0] as $v) {
         if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v[0])) {
             $pilot = $matches[10][$id][0];
             $km    = $matches[5][$id][0];
+            $dpt   = utf8_encode ( $matches[7][$id][0]);
+            if (!array_key_exists($dpt, $dpt_stats))
+                $dpt_stats[$dpt] = 0;
+            $dpt_stats[$dpt]++;
             update_pilot($pilots, $pilot, $km);
             $flight = array(
                 "date"   => utf8_encode ( $matches[4][$id][0]),
+                "dpt"    => $dpt,
                 "km"     => utf8_encode ( $km),
                 "pilot"  => $pilot,
                 "BD"     => utf8_encode ( $matches[11][$id][0] ),
@@ -51,9 +66,28 @@ function parse_html($matches, &$response, $surname, $name) {
     }
     $response['raw_flights'] = $flights; #array_merge($flights, $response['raw_flights']);
     $response['pilots']      = $pilots;
+    $response['stats']       = array();
+    asort($dpt_stats, SORT_NUMERIC );
+    $dpt_stats = array_reverse($dpt_stats, 1);
+    $response['stats2']      = $dpt_stats;
+    $response['stats']['top_dpt'] = "";
+    $i=0;
+    foreach ($dpt_stats as $d => $v) {
+        $response['stats']['top_dpt'] .= "$d ($v), ";
+        if ($i++ == 2) {
+            $response['stats']['top_dpt']=substr($response['stats']['top_dpt'], 0, -2);
+            break ;
+        }
+    }    
 }
 
 function update_pilot(&$pilots, $pilot, $km) {
+    if (!array_key_exists($pilot, $pilots)) {
+        $pilots[$pilot] = array();
+        $pilots[$pilot]["flights"] = 0;
+        $pilots[$pilot]["max"] = 0;
+        $pilots[$pilot]["sum"] = 0;
+    }
     if ($pilots[$pilot]["flights"])
         $pilots[$pilot]["flights"] = $pilots[$pilot]["flights"]+1;
     else
