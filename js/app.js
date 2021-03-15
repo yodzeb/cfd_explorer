@@ -38,7 +38,11 @@ function findGetParameter(parameterName) {
 
 $(document).ready(function () {
     load_clubs();
-    if(window.location.hash) {
+    var d="";
+    if (d=findGetParameter("date")) {
+	load_flights(d,d,true);
+    }
+    else if(window.location.hash) {
     	var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
 	if (hash == "last")
 	    days_ago(15);
