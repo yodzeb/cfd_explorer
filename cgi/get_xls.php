@@ -21,8 +21,9 @@ function parse_html($matches, &$response, $surname, $name) {
             $km    = floatval($matches[5][$id][0]);
             $dpt   = utf8_encode ( $matches[7][$id][0]);
             if (!array_key_exists($dpt, $dpt_stats))
-                $dpt_stats[$dpt] = 0;
-            $dpt_stats[$dpt]++;
+                $dpt_stats[$dpt] = 0;    #$km; #array( "count" => 0, "sum" => 0);
+            #$dpt_stats[$dpt]["count"]++;
+            $dpt_stats[$dpt] += $km;
             update_pilot($pilots, $pilot, $km);
             $all_sum += $km;
             if ($km > $all_max) {
@@ -76,7 +77,7 @@ function parse_html($matches, &$response, $surname, $name) {
     
     $i=0;
     foreach ($dpt_stats as $d => $v) {
-        $response['stats']['top_dpt'] .= "$d ($v), ";
+        $response['stats']['top_dpt'] .= "$d (".$v."kms), ";
         if ($i++ == 2) {
             $response['stats']['top_dpt']=substr($response['stats']['top_dpt'], 0, -2);
             break ;
