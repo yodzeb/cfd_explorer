@@ -174,7 +174,7 @@ function days_ago(days) {
 
 function load_flights_pilot(pilot) {
     // names are capitals
-    var matches=pilot.match(/([A-Z][a-z\s]+)\s+([A-Z\s]{2,})/);
+    var matches=pilot.match(/([A-Z][a-z\s\-]+)\s+([A-Z\s]{2,})/);
     console.log(matches);
     if (Array.isArray(matches) && matches.length > 1) {
 	var params = {
@@ -277,20 +277,28 @@ function convert_data(data) {
     for (f in data['raw_flights']) {
 	var poline2 = [];
 	//console.log ("BBB"+
+	console.log (data['raw_flights'][f]);
 	if (convertCoord(data['raw_flights'][f]["lon BD"]) != 300) {
 	    ["BD","B1","B2","B3","BA"].forEach(p => {
-		console.log (p);
 		lng = convertCoord(data['raw_flights'][f]["lon "+p]);
 		lat = convertCoord(data['raw_flights'][f]["lat "+p]);
-		avg_lng = avg_lng + lng;
-		avg_lat = avg_lat + lat;
-		if ( lat < lat_min) lat_min = lat;
-		if ( lat > lat_max) lat_max = lat;
-		if ( lng < lon_min) lon_min = lng;
-		if ( lng > lon_max) lon_max = lng;
+		if (lng != 300 && lat != 300) {
+		    avg_lng = avg_lng + lng;
+		    avg_lat = avg_lat + lat;
+		    if ( lat < lat_min) lat_min = lat;
+		    if ( lat > lat_max) lat_max = lat;
+		    if ( lng < lon_min) lon_min = lng;
+		    if ( lng > lon_max) lon_max = lng;
+		}
 	    });
 	    count += 1;
 	}
+	
+	console.log("aaa");
+	console.log(lat_min);
+	console.log(lat_max);
+	console.log(lon_min);
+	console.log(lon_max);
 	
 	poline2.push([convertCoord(data['raw_flights'][f]["lat BD"]), convertCoord(data['raw_flights'][f]["lon BD"]) ])
 	poline2.push([convertCoord(data['raw_flights'][f]["lat B1"]), convertCoord(data['raw_flights'][f]["lon B1"]) ]);
