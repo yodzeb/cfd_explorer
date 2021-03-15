@@ -1,14 +1,16 @@
 
-
+import sys
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 import json
 import datetime
+from datetime import datetime
 import configparser
 import requests
 from screenshot import do_screen
 import tweepy
 import re
+import getopt
 
 conf="./cfd_bot.conf";
 api = "http://cfd.wiro.fr/cgi/get_xls.php"
@@ -31,7 +33,12 @@ def date_ago(ago):
     a = tod - d
     return (a.date())
 
-def get_data(ds, de, config, ago):
+def date_day(day):
+    print (day)
+    d=datetime.strptime(day, '%d/%m/%Y')
+    return d
+
+def get_data(ds, de, config):
     url = api+"?name=&club=&surname=&season=null&dept=&date_start="
     ds_t = str(ds.day)+"/"+str(ds.month)+"/"+str(ds.year) 
     url += ds_t
@@ -63,7 +70,7 @@ def get_data(ds, de, config, ago):
             text+="\n"
             text+= "http://cfd.wiro.fr/?date="+ds_t
             print (text)
-            do_screen(ago)
+            do_screen(ds_t)
             image = "test.png"
         tweet(text, image, config)
         print (text)
@@ -86,7 +93,16 @@ def tweet_days(ago, config):
     date_end = date_ago(0)
     get_data(date_start, date_end, config, ago)
 
+def tweet_day(day, config):
+    d=date_day(day)
+    get_data(d,d,config)
     
 if __name__ == '__main__':
     c=read_config()
-    tweet_days(0, c)
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "d:m:", ["day=", "month="])
+        for o,a in opts:
+            if (o in ("-d", "--day")):
+                tweet_day(a, c)
+    except:
+        tweet_days(0, c)

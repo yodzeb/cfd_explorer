@@ -275,8 +275,8 @@ function convert_data(data) {
 	var poline2 = [];
 	//console.log ("BBB"+
 	if (convertCoord(data['raw_flights'][f]["lon BD"]) != 300) {
-	    lng = convertCoord(data['raw_flights'][f]["lon BD"]);
-	    lat = convertCoord(data['raw_flights'][f]["lat BD"]);
+	    lng = convertCoord(data['raw_flights'][f]["lon B1"]);
+	    lat = convertCoord(data['raw_flights'][f]["lat B1"]);
 	    avg_lng = avg_lng + lng;
 	    avg_lat = avg_lat + lat;
 	    if ( lat < lat_min) lat_min = lat;
@@ -288,7 +288,7 @@ function convert_data(data) {
 	
 	poline2.push([convertCoord(data['raw_flights'][f]["lat BD"]), convertCoord(data['raw_flights'][f]["lon BD"]) ])
 	poline2.push([convertCoord(data['raw_flights'][f]["lat B1"]), convertCoord(data['raw_flights'][f]["lon B1"]) ]);
-	poline2.push([convertCoord(data['raw_flights'][f]["lat B2"]),  convertCoord(data['raw_flights'][f]["lon B2"]) ]);
+	poline2.push([convertCoord(data['raw_flights'][f]["lat B2"]), convertCoord(data['raw_flights'][f]["lon B2"]) ]);
 	if (/\d/.test(data['raw_flights'][f]["lat B3"]) && /\d/.test(data['raw_flights'][f]["lon B3"]) && data['raw_flights'][f]["lat B3"] != 0 && data['raw_flights'][f]["lng B3"] != 0 ) {
 	    poline2.push([convertCoord(data['raw_flights'][f]["lat B3"]), convertCoord(data['raw_flights'][f]["lon B3"]) ]);
 	}
