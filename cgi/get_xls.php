@@ -209,11 +209,11 @@ function read_params() {
         $dept = $_GET['dept'];
     if (array_key_exists("surname", $_GET) && preg_match('#^\w*$#', $surname))
         $surname = $_GET["surname"];
-    if (array_key_exists("date_start", $_GET) && preg_match('#^[\d\/]+$#', $_GET["date_start"])) {
-        $date_start = $_GET["date_start"];
+    if (array_key_exists("date_start", $_GET) && preg_match('#^[\d\/\-]+$#', $_GET["date_start"])) {
+        $date_start = str_replace("/","-",$_GET["date_start"]);
     }
-    if (array_key_exists("date_end", $_GET) && preg_match('#^[\d\/]+$#', $_GET["date_end"])) {
-        $date_end = $_GET["date_end"];
+    if (array_key_exists("date_end", $_GET) && preg_match('#^[\d\/\-]+$#', $_GET["date_end"])) {
+        $date_end = str_replace("/","-",$_GET["date_end"]);
     }
 }
 
@@ -222,7 +222,6 @@ function exec_request() {
     global $response, $season, $biplace, $dept, $name, $club, $club_id, $surname, $date_start, $date_end;
     if ( $name != "" || $club != "" || ($dept != "" && $season != "") || $biplace == "1" || $club_id != 0 || ($date_start != "" && $date_end != "")) {
         $dept_list = explode(',', $dept);
-        #var_dump($dept_list);
         if(sizeof($dept_list) < 10) {
             foreach ($dept_list as $dept) {
                 #echo $dept;
@@ -235,7 +234,7 @@ function exec_request() {
         }
     }
     else {
-        array_push($response["warnings"], "Too few params");
+        array_push($response["warnings"], "Too few params $date_start");
     }
     header('Content-Type: application/json');
     header('Access-Control-Allow-Origin: *');
