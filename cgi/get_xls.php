@@ -1,21 +1,7 @@
 <?php
 
 include "regex.php";
-
-if (!function_exists('array_key_first')) {
-    function array_key_first(array $arr) {
-        foreach($arr as $key => $unused) {
-            return $key;
-        }
-        return NULL;
-    }
-}
-
-function myconvert ($val) {
-    $v = str_replace(",", ".", $val);
-    $v = floatval($v);
-    return $v;
-}
+include "functions.php";
 
 function parse_html($matches, &$response, $surname, $name) {
     #var_dump($matches);
@@ -24,20 +10,25 @@ function parse_html($matches, &$response, $surname, $name) {
     $flights = $response["raw_flights"]; #array();
     $pilots  = $response["pilots"]; #array();
     $dpt_stats = array();
+    $all_max = 0;
+    $all_max_name = "";
     $all_sum = 0;
     $count = 0;
-    #array_push($response['warnings'], $matches);
     foreach ($matches[0] as $v) {
         if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v[0])) {
             $count ++;
             $pilot = $matches[10][$id][0];
-            $km    = $matches[5][$id][0];
+            $km    = floatval($matches[5][$id][0]);
             $dpt   = utf8_encode ( $matches[7][$id][0]);
             if (!array_key_exists($dpt, $dpt_stats))
                 $dpt_stats[$dpt] = 0;
             $dpt_stats[$dpt]++;
             update_pilot($pilots, $pilot, $km);
             $all_sum += $km;
+            if ($km > $all_max) {
+                $all_max = $km;
+                $all_max_name = $pilot;
+            }
             $flight = array(
                 "date"   => utf8_encode ( $matches[4][$id][0]),
                 "dpt"    => $dpt,
@@ -69,7 +60,7 @@ function parse_html($matches, &$response, $surname, $name) {
         if ($v["flights"] != 0)
             $pilots[$p]["avg"] = round($v["sum"]/$v["flights"]);
     }
-    $response['raw_flights'] = $flights; #array_merge($flights, $response['raw_flights']);
+    $response['raw_flights'] = $flights;
     $response['pilots']      = $pilots;
     $response['stats']       = array();
     asort($dpt_stats, SORT_NUMERIC );
@@ -80,6 +71,8 @@ function parse_html($matches, &$response, $surname, $name) {
         "avg"     => floor($all_sum / $count)
     );
     $response['stats']['top_dpt'] = "";
+    $response['stats']['max'] = $all_max;
+    $response['stats']['max_name'] = $all_max_name;
     
     $i=0;
     foreach ($dpt_stats as $d => $v) {
