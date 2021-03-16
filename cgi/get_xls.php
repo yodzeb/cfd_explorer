@@ -15,11 +15,11 @@ function parse_html($matches, &$response, $surname, $name) {
     $all_sum = 0;
     $count = 0;
     foreach ($matches[0] as $v) {
-        if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v[0])) {
+        if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v)) {
             $count ++;
-            $pilot = $matches[10][$id][0];
-            $km    = floatval($matches[5][$id][0]);
-            $dpt   = utf8_encode ( $matches[7][$id][0]);
+            $pilot = $matches[10][$id];
+            $km    = floatval($matches[5][$id]);
+            $dpt   = utf8_encode ( $matches[7][$id]);
             if (!array_key_exists($dpt, $dpt_stats))
                 $dpt_stats[$dpt] = 0;    #$km; #array( "count" => 0, "sum" => 0);
             #$dpt_stats[$dpt]["count"]++;
@@ -31,25 +31,25 @@ function parse_html($matches, &$response, $surname, $name) {
                 $all_max_name = $pilot;
             }
             $flight = array(
-                "date"   => utf8_encode ( $matches[4][$id][0]),
+                "date"   => utf8_encode ( $matches[4][$id]),
                 "dpt"    => $dpt,
                 "km"     => utf8_encode ( $km),
                 "pilot"  => $pilot,
-                "BD"     => utf8_encode ( $matches[11][$id][0] ),
-                "lat BD" => myconvert($matches[12][$id][0]),
-                "lon BD" => myconvert($matches[13][$id][0]),
-                "B1"     => utf8_encode ( $matches[15][$id][0] ),
-                "lat B1" => myconvert($matches[16][$id][0]),
-                "lon B1" => myconvert($matches[17][$id][0]),
-                "B2"     => utf8_encode ( $matches[19][$id][0] ),
-                "lat B2" => myconvert($matches[20][$id][0]),
-                "lon B2" => myconvert($matches[21][$id][0]),
-                "B3"     => utf8_encode ( $matches[23][$id][0]),
-                "lat B3" => myconvert($matches[24][$id][0]),
-                "lon B3" => myconvert($matches[25][$id][0]),
-                "BA"     => utf8_encode ( $matches[27][$id][0]),
-                "lat BA" => myconvert($matches[28][$id][0]),
-                "lon BA" => myconvert($matches[29][$id][0]),
+                "BD"     => utf8_encode ( $matches[11][$id] ),
+                "lat BD" => myconvert($matches[12][$id]),
+                "lon BD" => myconvert($matches[13][$id]),
+                "B1"     => utf8_encode ( $matches[15][$id] ),
+                "lat B1" => myconvert($matches[16][$id]),
+                "lon B1" => myconvert($matches[17][$id]),
+                "B2"     => utf8_encode ( $matches[19][$id] ),
+                "lat B2" => myconvert($matches[20][$id]),
+                "lon B2" => myconvert($matches[21][$id]),
+                "B3"     => utf8_encode ( $matches[23][$id]),
+                "lat B3" => myconvert($matches[24][$id]),
+                "lon B3" => myconvert($matches[25][$id]),
+                "BA"     => utf8_encode ( $matches[27][$id]),
+                "lat BA" => myconvert($matches[28][$id]),
+                "lon BA" => myconvert($matches[29][$id]),
             );
             array_push($flights, $flight);
         }
@@ -66,11 +66,13 @@ function parse_html($matches, &$response, $surname, $name) {
     $response['stats']       = array();
     asort($dpt_stats, SORT_NUMERIC );
     $dpt_stats = array_reverse($dpt_stats, 1);
-    $response['stats']['all'] = array(
-        "sum" => $all_sum,
-        "count"   => $count,
-        "avg"     => floor($all_sum / $count)
-    );
+    if ($count > 0) {
+        $response['stats']['all'] = array(
+            "sum" => $all_sum,
+            "count"   => $count,
+            "avg"     => floor($all_sum / $count)
+        );
+    }
     $response['stats']['top_dpt'] = "";
     $response['stats']['max'] = $all_max;
     $response['stats']['max_name'] = $all_max_name;
@@ -288,9 +290,10 @@ function do_request($name, $club, $dept, $season, $biplace, $club_id, &$response
         $html_xls = file_get_contents($url, false);
         #echo $html_xls;
         error_log(print_r("mem_b: ".memory_get_usage() , TRUE));    
-        if (preg_match_all($html_regex, $html_xls, $matches, PREG_OFFSET_CAPTURE)) {
+        if (preg_match_all($html_regex, $html_xls, $matches)){#, PREG_OFFSET_CAPTURE)) {
+            #error_log(print_r("aaa".var_dump($matches), TRUE));
+            error_log(print_r("mem_af: ".memory_get_usage() , TRUE));    
             $html_xls="";
-            error_log(print_r("len: ".strlen($html_regex) , TRUE));
             array_push($response['warnings'], "Parsing HTML");
             parse_html($matches, $response, $surname, $name);
             #file_put_contents ( "/tmp/bla_raw", $html_xls);

@@ -151,7 +151,7 @@ function convert_date(d, sep, rev) {
 
     if (month.length < 2) month = '0' + month;
     if (day.length < 2) day = '0' + day;
-    console.log(day+sep+month+sep+year);
+    //console.log(day+sep+month+sep+year);
     if (rev) {
 	return year+sep+month+sep+day;
     }
@@ -166,7 +166,7 @@ function days_ago(days) {
     var d2= new Date();
     
     d2.setDate(d.getDate() - days);
-    console.log(d);    
+    //console.log(d);    
     d = convert_date(d,"/");
     d2 = convert_date(d2,"/");
     load_flights(d2,d);    
@@ -175,7 +175,7 @@ function days_ago(days) {
 function load_flights_pilot(pilot) {
     // names are capitals
     var matches=pilot.match(/([A-Z][a-z\s\-]+)\s+([A-Z\-\s]{3,})/);
-    console.log(matches);
+    //console.log(matches);
     if (Array.isArray(matches) && matches.length > 1) {
 	var params = {
 	    "surname" : matches[1],
@@ -233,7 +233,7 @@ function get_cfd_page(params) {
     var http = new XMLHttpRequest();
     var url = "cgi/get_xls.php";
     var club_id = lookup_club_id(params["club_name"]);
-    console.log(params);
+    //console.log(params);
     var get_params = "name="+params["name"]+"&club="+params["club_name"]+"&surname="+params["surname"]+"&season="+params["season"]+(params["bi"]?"&bi=1":"")+"&dept="+params["dept"];
     get_params += "&date_start="+params["date_start"]+"&date_end="+params["date_end"];
     
@@ -246,7 +246,7 @@ function get_cfd_page(params) {
 	    if (http.status == 200) {
 		var data = JSON.parse(http.responseText)
 		//console.log(http.responseText);
-		console.log("labla");
+		//console.log("labla");
 		if (data["pilots"] && Object.keys(data["pilots"]).length > 0) {
 		    convert_data(data);
 		}
@@ -276,8 +276,6 @@ function convert_data(data) {
     
     for (f in data['raw_flights']) {
 	var poline2 = [];
-	//console.log ("BBB"+
-	console.log (data['raw_flights'][f]);
 	if (convertCoord(data['raw_flights'][f]["lon BD"]) != 300) {
 	    ["BD","B1","B2","B3","BA"].forEach(p => {
 		lng = convertCoord(data['raw_flights'][f]["lon "+p]);
@@ -293,12 +291,6 @@ function convert_data(data) {
 	    });
 	    count += 1;
 	}
-	
-	console.log("aaa");
-	console.log(lat_min);
-	console.log(lat_max);
-	console.log(lon_min);
-	console.log(lon_max);
 	
 	poline2.push([convertCoord(data['raw_flights'][f]["lat BD"]), convertCoord(data['raw_flights'][f]["lon BD"]) ])
 	poline2.push([convertCoord(data['raw_flights'][f]["lat B1"]), convertCoord(data['raw_flights'][f]["lon B1"]) ]);
@@ -416,7 +408,7 @@ function get_median_date () {
 	    day = match[1];
 	    var d = new Date(year+'-'+month+'-'+day);
 	    sum += d.getTime();
-	    console.log (all_flights[f]);
+	    //console.log (all_flights[f]);
 	    count += 1;
 
 	}
@@ -426,12 +418,11 @@ function get_median_date () {
     if (!sum)
 	sum=Date.now();
     res = new Date(sum);
-    console.log(res);
+    //console.log(res);
     return res;
 }
 
 function to_date_obj (d) {
-    console.log (d);
     var out = undefined;
     match = d.match(/(\d+)\/(\d+)\/(\d+)/)
     if (match.length > 1) {
