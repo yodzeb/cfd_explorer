@@ -113,6 +113,6 @@ if __name__ == '__main__':
                 tweet_day(a, c)
             if (o in ("-t", "--today")):
                 tweet_days(0, c)
-    except:
-        print ("except");
-        #tweet_days(0, c)
+    except :
+        print ("except")
+
