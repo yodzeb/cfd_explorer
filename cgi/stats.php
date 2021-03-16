@@ -14,13 +14,13 @@ function prepare_stats(&$response, &$pilots, &$flights, $all_max, $all_max_name,
     $dpt_stats = array_reverse($dpt_stats, 1);
     if ($count > 0) {
         $response['stats']['all'] = array(
-            "sum" => $all_sum,
-            "count"   => $count,
-            "avg"     => floor($all_sum / $count)
+            "sum"   => $all_sum,
+            "count" => $count,
+            "avg"   => floor($all_sum / $count)
         );
     }
-    $response['stats']['top_dpt'] = "";
-    $response['stats']['max'] = $all_max;
+    $response['stats']['top_dpt']  = "";
+    $response['stats']['max']      = $all_max;
     $response['stats']['max_name'] = $all_max_name;
     
     $i=0;

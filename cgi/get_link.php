@@ -37,7 +37,6 @@ $context  = stream_context_create($options);
 $result = file_get_contents($url, false, $context);
 
 if( preg_match ('#a href="https:\/\/parapente.ffvl.fr\/cfd\/liste\/vol\/(\d+)[^\n]+'.$name_orig.'#s', $result, $matches, PREG_OFFSET_CAPTURE)) {
-    #header('Content-Type: application/json');
     header('Access-Control-Allow-Origin: *');
 
     if (array_key_exists('direct', $_GET) && $_GET['direct'] == 1) {
