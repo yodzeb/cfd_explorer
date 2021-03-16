@@ -9,7 +9,7 @@ on:
     tags:
       - v1.*
   create:
-    tage:
+    tags:
       - v1.*
     
   # Allows you to run this workflow manually from the Actions tab
