@@ -52,7 +52,9 @@ def get_data(ds, de, config):
         image = ""
         text = "Pas de vol CFD déclaré ce "+str(ds.day)+"/"+str(ds.month)+"/"+str(ds.year)+" "+chr(0x1F62D)+"\nA demain !"+chr(0x1F609)
         if ("stats" in data and "max" in data["stats"] and data["stats"]["all"]["sum"] > 0):
-            text = chr(0x1F3C1)+" "+str(data["stats"]["all"]["sum"])+" kilomètres en "+chr(0x1FA82)+" déclarés ce "+str(ds.day)+"/"+str(ds.month)+"/"+str(ds.year)+" à la CFD!\n"
+            text = chr(0x1F3C1)+" "+str(data["stats"]["all"]["sum"])+" kilomètres et "
+            text+= str(data["stats"]["all"]["count"])+" vols en "+chr(0x1FA82)+" déclarés ce "
+            text+= str(ds.day)+"/"+str(ds.month)+"/"+str(ds.year)+" à la CFD!\n"
             text+= "Top departements: "+str(data["stats"]["top_dpt"])+"\n"
             name = re.sub('[\sA-Z\-]{3,}','',data["stats"]["max_name"])
             text+= chr(0x1F3C6)+" Bravo à "+name+" pour ses "+str(data["stats"]["max"])+" kms"
@@ -89,12 +91,14 @@ def tweet(text, image, config):
         api.update_with_media(image, text)
 
 def tweet_days(ago, config):
+    print ("[!] Search days ago")
     date_start = date_ago(ago)
     date_end = date_ago(0)
     get_data(date_start, date_end, config)
     sys.exit(0)
 
 def tweet_day(day, config):
+    print ("[!] Search days")
     d=date_day(day)
     get_data(d,d,config)
     sys.exit(0)
@@ -104,9 +108,11 @@ if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], "td:m:", ["today", "day=", "month="])
         for o,a in opts:
+            print (o)
             if (o in ("-d", "--day")):
                 tweet_day(a, c)
             if (o in ("-t", "--today")):
                 tweet_days(0, c)
     except:
-        tweet_days(0, c)
+        print ("except");
+        #tweet_days(0, c)

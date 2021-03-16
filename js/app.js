@@ -305,13 +305,19 @@ function convert_data(data) {
 		 "km"   : data['raw_flights'][f]['km'],
 		 "BA"   : data['raw_flights'][f]['BA'],
 		 "BD"   : data['raw_flights'][f]['BD'],
-	       }
+	       };
 	//lines.push(poline2);
 	lines.push(poly);
 	id = id+1;
     }
     sum = "<a href='javascript:reinit_pilot()' onmouseover='javascript:reinit_pilot()'>Voir tous les "+data["raw_flights"].length+" vols des "+Object.keys(data["pilots"]).length+" pilotes</a>";
-    sum += "<table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'><thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>Pilotes</th><th class='th-sm'>Vols</th><th class='th-sm'>Tot</th><th class='th-sm'>Max</th><th class='th-sm'>Moy</th></tr></thead><tbody>";
+    sum += "<table cellspacing='0' id='pilot_list' class='table table-striped table-bordered table-sm'>";
+    sum += "<thead><tr onclick=reinit_pilot() onmouseover=reinit_pilot()><th class='th-sm'>Pilotes</th>";
+    sum += "<th class='th-sm'>Vols<br>("+data["stats"]["all"]["count"]+")</th>";
+    sum += "<th class='th-sm'>Tot<br>(" +data["stats"]["all"]["sum"]  +")</th>";
+    sum += "<th class='th-sm'>Max<br>(" +data["stats"]["max"]         +")</th>";
+    sum += "<th class='th-sm'>Moy<br>(" +data["stats"]["all"]["avg"]  +")</th>";
+    sum += "</tr></thead><tbody>";
     all_pilots = [];
     var id=0;
     for (p in data["pilots"]) {
@@ -324,7 +330,6 @@ function convert_data(data) {
     }
     sum += "</tbody></table>";
 
-    //console.log (avg_lat);
     if (count > 0) {
 	avg_lat = avg_lat / count;
 	avg_lng = avg_lng / count;
@@ -485,7 +490,6 @@ function display_map (lines, x, y, sum, zoom, bounds) {
 	opacity: 0.5,
 	attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
     }).addTo(map);
-
     
     L.control.scale().addTo(map);
 
