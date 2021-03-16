@@ -70,7 +70,8 @@ def get_data(ds, de, config):
             else:
                 text += chr(0x1F414) # chicken
             text+="\n"
-            text+= "http://cfd.wiro.fr/?date="+ds_t
+            text+= "http://cfd.wiro.fr/?date="+ds_t+"\n"
+            text+= "https://parapente.ffvl.fr/cfd/liste/last"
             print (text)
             do_screen(ds_t)
             image = "test.png"
