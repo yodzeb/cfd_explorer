@@ -15,4 +15,16 @@ function myconvert ($val) {
     return $v;
 }
 
+        
+function get_empty_message() {
+    $msg = array();
+    $msg['status'] = "ok";
+    $msg['errors'] = array();
+    $msg['warnings'] = array();
+    $msg['raw_flights'] = array();
+    $msg['pilots']      = array();
+    return $msg;  
+}
+
+
 ?>

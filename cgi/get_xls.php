@@ -2,116 +2,9 @@
 
 include "regex.php";
 include "functions.php";
+include "cfd_html.php";
+include "stats.php";
 
-function parse_html($matches, &$response, $surname, $name) {
-    #var_dump($matches);
-    error_log(print_r("mem: ".memory_get_usage() , TRUE));
-    $id = 0;
-    $flights = $response["raw_flights"]; #array();
-    $pilots  = $response["pilots"]; #array();
-    $dpt_stats = array();
-    $all_max = 0;
-    $all_max_name = "";
-    $all_sum = 0;
-    $count = 0;
-    foreach ($matches[0] as $v) {
-        if (preg_match('#'.$surname.'[\-\w\s]*\s+'.$name.'#i', $v)) {
-            $count ++;
-            $pilot = $matches[10][$id];
-            $km    = floatval($matches[5][$id]);
-            $dpt   = utf8_encode ( $matches[7][$id]);
-            if (!array_key_exists($dpt, $dpt_stats))
-                $dpt_stats[$dpt] = 0;    #$km; #array( "count" => 0, "sum" => 0);
-            #$dpt_stats[$dpt]["count"]++;
-            $dpt_stats[$dpt] += $km;
-            update_pilot($pilots, $pilot, $km);
-            $all_sum += $km;
-            if ($km > $all_max) {
-                $all_max = $km;
-                $all_max_name = $pilot;
-            }
-            $flight = array(
-                "date"   => utf8_encode ( $matches[4][$id]),
-                "dpt"    => $dpt,
-                "km"     => utf8_encode ( $km),
-                "pilot"  => $pilot,
-                "BD"     => utf8_encode ( $matches[11][$id] ),
-                "lat BD" => myconvert($matches[12][$id]),
-                "lon BD" => myconvert($matches[13][$id]),
-                "B1"     => utf8_encode ( $matches[15][$id] ),
-                "lat B1" => myconvert($matches[16][$id]),
-                "lon B1" => myconvert($matches[17][$id]),
-                "B2"     => utf8_encode ( $matches[19][$id] ),
-                "lat B2" => myconvert($matches[20][$id]),
-                "lon B2" => myconvert($matches[21][$id]),
-                "B3"     => utf8_encode ( $matches[23][$id]),
-                "lat B3" => myconvert($matches[24][$id]),
-                "lon B3" => myconvert($matches[25][$id]),
-                "BA"     => utf8_encode ( $matches[27][$id]),
-                "lat BA" => myconvert($matches[28][$id]),
-                "lon BA" => myconvert($matches[29][$id]),
-            );
-            array_push($flights, $flight);
-        }
-        $id = $id + 1;
-    }
-    foreach ($pilots as $p => $v) {
-        #var_dump($p);
-        $pilots[$p]["avg"] = 0;
-        if ($v["flights"] != 0)
-            $pilots[$p]["avg"] = round($v["sum"]/$v["flights"]);
-    }
-    $response['raw_flights'] = $flights;
-    $response['pilots']      = $pilots;
-    $response['stats']       = array();
-    asort($dpt_stats, SORT_NUMERIC );
-    $dpt_stats = array_reverse($dpt_stats, 1);
-    if ($count > 0) {
-        $response['stats']['all'] = array(
-            "sum" => $all_sum,
-            "count"   => $count,
-            "avg"     => floor($all_sum / $count)
-        );
-    }
-    $response['stats']['top_dpt'] = "";
-    $response['stats']['max'] = $all_max;
-    $response['stats']['max_name'] = $all_max_name;
-    
-    $i=0;
-    foreach ($dpt_stats as $d => $v) {
-        $response['stats']['top_dpt'] .= "$d (".$v."kms), ";
-        if ($i++ == 2) {
-            break ;
-        }
-    }
-    if ($i>0)
-        $response['stats']['top_dpt']=substr($response['stats']['top_dpt'], 0, -2);
-}
-
-function update_pilot(&$pilots, $pilot, $km) {
-    if (!array_key_exists($pilot, $pilots)) {
-        $pilots[$pilot] = array();
-        $pilots[$pilot]["flights"] = 0;
-        $pilots[$pilot]["max"] = 0;
-        $pilots[$pilot]["sum"] = 0;
-    }
-    if ($pilots[$pilot]["flights"])
-        $pilots[$pilot]["flights"] = $pilots[$pilot]["flights"]+1;
-    else
-        $pilots[$pilot]["flights"] = 1;
-    if ($pilots[$pilot]["max"]){
-        if ( $km > $pilots[$pilot]["max"]){
-            $pilots[$pilot]["max"] = (float) $km;
-        }
-    }
-    else
-        $pilots[$pilot]["max"] = (float)$km;
-    if ($pilots[$pilot]["sum"])
-                $pilots[$pilot]["sum"] += $km;
-    else
-        $pilots[$pilot]["sum"] = (float) $km;
-    
-}
 
 # seems not to work anymore.
 function parse_csv($content, &$response, $surname, $name) {
@@ -157,18 +50,8 @@ function parse_csv($content, &$response, $surname, $name) {
     $response['pilots']      = $pilots;
     $response["raw_flights"] = $flights;
     #echo json_encode($response);
-    #passthru("rm -f $filename $filename".".csv");
+    passthru("rm -f $filename $filename".".csv");
     return $response;
-}
-        
-function get_empty_message() {
-    $msg = array();
-    $msg['status'] = "ok";
-    $msg['errors'] = array();
-    $msg['warnings'] = array();
-    $msg['raw_flights'] = array();
-    $msg['pilots']      = array();
-    return $msg;  
 }
 
 
@@ -267,7 +150,6 @@ function do_request($name, $club, $dept, $season, $biplace, $club_id, &$response
         "op" => "Filtrer",
         "form_id" => "requete_filtre_form");
 
-// use key 'http' even if you send the request to https://...
     $options = array(
         'http' => array(
             'header'  => "Content-type: application/x-www-form-urlencoded\r\n",
@@ -278,26 +160,17 @@ function do_request($name, $club, $dept, $season, $biplace, $club_id, &$response
     $context  = stream_context_create($options);
     $result = file_get_contents($url, false, $context);
 
-    #file_put_contents("/tmp/bla", $result);    
-
     if ($result === FALSE) { $response['errors'] = 'error'; /* Handle error */ }
     
-    
     if (preg_match ('#a href=\"(/node/1650/[^\"]+)\"#s', $result, $matches, PREG_OFFSET_CAPTURE)) {
-        #echo "https://parapente.ffvl.fr" . $matches[1][0];
         $url = "https://parapente.ffvl.fr" . $matches[1][0];
         array_push($response['warnings'], "Fecthing $url");
         $html_xls = file_get_contents($url, false);
-        #echo $html_xls;
-        error_log(print_r("mem_b: ".memory_get_usage() , TRUE));    
+        #error_log(print_r("mem_b: ".memory_get_usage() , TRUE));    
         if (preg_match_all($html_regex, $html_xls, $matches)){#, PREG_OFFSET_CAPTURE)) {
-            #error_log(print_r("aaa".var_dump($matches), TRUE));
-            error_log(print_r("mem_af: ".memory_get_usage() , TRUE));    
             $html_xls="";
             array_push($response['warnings'], "Parsing HTML");
             parse_html($matches, $response, $surname, $name);
-            #file_put_contents ( "/tmp/bla_raw", $html_xls);
-
         }
         else {
             $response = parse_csv($html_xls, $response, $surname, $name);
