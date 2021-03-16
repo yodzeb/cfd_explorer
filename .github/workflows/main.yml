@@ -42,4 +42,4 @@ jobs:
   
       # Unit test
       - name: unit test
-        run: curl http://cfd.acc.wiro.fr/cgi/get_xls.php?date_start=12/03/20&date_end=12/03/2020
+        run: curl "http://cfd.acc.wiro.fr/cgi/get_xls.php?date_start=12/03/20&date_end=12/03/20" | grep stats
