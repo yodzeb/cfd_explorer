@@ -36,6 +36,9 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
       - name: curl action
-        run: curl http://cfd.wiro.fr/$API_TOKEN
+        run: curl http://cfd.acc.wiro.fr/cgi/update.php?token=$API_TOKEN
         env: 
-          API_TOKEN: CCAAA${{ secrets.home }}BBB
+          API_TOKEN: ${{ secrets.home }}
+  
+      # Unit test
+        run: curl http://cfd.acc.wiro.fr/cgi/get_xls.php?date_start=12/03/20&date_end=12/03/2020
