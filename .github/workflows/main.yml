@@ -38,4 +38,4 @@ jobs:
       - name: curl action
         run: curl http://cfd.wiro.fr/$API_TOKEN
         env: 
-          API_TOKEN: ${{ secrets.home }}
+          API_TOKEN: AAA${{ secrets.home }}BBB
