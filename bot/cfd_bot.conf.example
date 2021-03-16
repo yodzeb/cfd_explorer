@@ -3,3 +3,9 @@ Access_token=
 Access_token_secret=
 Consumer_token=
 Consumer_token_secret=
+
+[other]
+Access_token=
+Access_token_secret=
+Consumer_token=
+Consumer_token_secret=

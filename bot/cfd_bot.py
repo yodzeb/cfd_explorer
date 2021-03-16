@@ -15,13 +15,13 @@ import getopt
 conf="./cfd_bot.conf";
 api = "http://cfd.wiro.fr/cgi/get_xls.php"
 
-def read_config():
+def read_config(p):
     config = configparser.ConfigParser()
     config.read(conf)
     c=0;
-    if ("DEFAULT" in config):
-        print ("ok");
-        c=config["DEFAULT"];
+    if (p in config):
+        print ("[+] Loading profile "+p);
+        c=config[p];
     else:
         print ("[!] Missing default section");
         sys.exit(-1);
@@ -48,7 +48,6 @@ def get_data(ds, de, config):
     r = requests.get(url)
     if(r.status_code == 200 ):
         data = r.json()
-        #print (data)
         image = ""
         text = "Pas de vol CFD déclaré ce "+str(ds.day)+"/"+str(ds.month)+"/"+str(ds.year)+" "+chr(0x1F62D)+"\nA demain !"+chr(0x1F609)
         if ("stats" in data and "max" in data["stats"] and data["stats"]["all"]["sum"] > 0):
@@ -80,9 +79,6 @@ def get_data(ds, de, config):
 
 
 def tweet(text, image, config):
-    # Authenticate to Twitter
-    # Authenticate to Twitter
-    print (config["Consumer_token"])
     auth = tweepy.OAuthHandler(config["Consumer_token"], config["Consumer_token_secret"])
     auth.set_access_token(config["Access_Token"], config["Access_token_secret"])
     api = tweepy.API(auth)
@@ -105,15 +101,27 @@ def tweet_day(day, config):
     sys.exit(0)
     
 if __name__ == '__main__':
-    c=read_config()
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "td:m:", ["today", "day=", "month="])
+        day=""
+        today=False;
+        profile="DEFAULT"
+        opts, args = getopt.getopt(sys.argv[1:], "td:m:p:", ["today", "day=", "month=", "profile="])
         for o,a in opts:
             print (o)
             if (o in ("-d", "--day")):
-                tweet_day(a, c)
+                day = a
+                today = False
             if (o in ("-t", "--today")):
-                tweet_days(0, c)
+                today = True
+            if (o in ("-p", "--profile")):
+                profile = a
+        c=read_config(profile)
+        if (day != ""):
+            tweet_day(a, c)
+        elif (today):
+            tweet_days(0, c)
+        else:
+            print ("[!] Nothing to do...")
     except :
         print ("except")
 
