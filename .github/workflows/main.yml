@@ -36,6 +36,4 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
       - name: curl action
-        uses: enflo/curl-action@v1.2
-        with:
-          curl: http://cfd.wiro.fr/bla
+        run: curl http://cfd.wiro.fr/{{ secret.home }}
