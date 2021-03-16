@@ -471,6 +471,7 @@ function display_map (lines, x, y, sum, zoom, bounds) {
 	map.remove();
     }
     document.getElementById("map").innerHTML ="";
+    document.getElementById("map").style="";
     map = L.map('map', { crs:L.CRS.EPSG3857 }).setView(
 	{
 	    lon: y,
@@ -482,7 +483,7 @@ function display_map (lines, x, y, sum, zoom, bounds) {
 	map.flyToBounds(bounds);
     else
 	map.fitBounds(bounds);
-    
+
     
     // add the OpenStreetMap tiles
     L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
