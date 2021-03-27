@@ -33,6 +33,7 @@ CFD output format of '/cfd/selectionner-les-vols' is just horrible:
 
 ### Memory consumption
 > Large number of results can make the CGI to run out of memory on the server
+> rencently improved. 1y is now feasible with 128MB memory per req sent to CGI.
 
 ### GUI
 GUI might be buggy sometimes
