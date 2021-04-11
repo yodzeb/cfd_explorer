@@ -50,6 +50,7 @@ def get_data(ds, de, config):
         data = r.json()
         image = ""
         text = "Pas de vol CFD déclaré ce "+str(ds.day)+"/"+str(ds.month)+"/"+str(ds.year)+" "+chr(0x1F62D)+"\nA demain !"+chr(0x1F609)
+        test = "...zzzZZZzzzZZZzzz..."
         if ("stats" in data and "max" in data["stats"] and data["stats"]["all"]["sum"] > 0):
             text = chr(0x1F3C1)+" "+str(data["stats"]["all"]["sum"])+" kilomètres et "
             text+= str(data["stats"]["all"]["count"])+" vols en "+chr(0x1FA82)+" déclarés ce "
@@ -123,5 +124,7 @@ if __name__ == '__main__':
         else:
             print ("[!] Nothing to do...")
     except :
+        e = sys.exc_info()[0]
+        print( "<p>Error: %s</p>" % e )
         print ("except")
 
