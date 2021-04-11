@@ -18,13 +18,15 @@ def do_screen(ago):
     chrome_options.add_argument('--headless')
     chrome_options.add_argument('--disable-gpu')
     
-    driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver",
+#    driver = webdriver.Chrome("/usr/lib/chromium-browser/chromedriver",
+    driver = webdriver.Chrome("/usr/bin/chromedriver",
                                    service_args=service_args,
                                    service_log_path=service_log_path,
                                    chrome_options=chrome_options)
     url = "http://cfd.wiro.fr/?noform=1&date="+str(ago)
     driver.get(url)
     time.sleep(30)
-    util.fullpage_screenshot(driver, "test.png")
+    driver.save_screenshot("test.png")
+    #util.fullpage_screenshot(driver, "test.png")
     display.stop()
 
