@@ -23,13 +23,13 @@ while ($page =~ /option value="(\d+)">([^\<]+)<\/option/mgs ) {
     push @{$clubs->{'clubs'}}, { "id" => $id, "name" => $name };
 }
 
-if (-e "/var/www/cfd/ressources") {
-    open(OUTPUT, "> /var/www/cfd/ressources/clubs.json");
+if (-e "/var/www/cfd/www/ressources") {
+    open(OUTPUT, "> /var/www/cfd/www/ressources/clubs.json");
     print OUTPUT encode_json($clubs);
     close (OUTPUT);
 }
 else {
-    open(OUTPUT, "> /var/www/cfd_explorer/ressources/clubs.json");
+    open(OUTPUT, "> /var/www/cfd_explorer/www/ressources/clubs.json");
     print OUTPUT encode_json($clubs);
     close (OUTPUT);
 }
