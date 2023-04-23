@@ -34,7 +34,7 @@ def date_ago(ago):
     return (a.date())
 
 def date_day(day):
-    print (day)
+    print ("AAA"+day)
     d=datetime.strptime(day, '%d/%m/%Y')
     return d
 

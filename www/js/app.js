@@ -322,8 +322,8 @@ function on_Click(e) {
 	    content += "Attero: "+poly_res[l]["BA"]+"<br>";
 	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"')\">CFD</a> / ";
 	    content += "<a href=\"javascript:goto_flight('"+pilot+"','"+date+"', true)\">VisuGPS</a><br>";
-	    content += "<a href='javascript:pressure_display(\""+date+"\")'>Pressure</a> / ";
-	    content += "<a href='javascript:pressure_display(\""+date+"\", \"wind10\")'>Wind 10m</a> <br> ";
+	    content += "<a href='javascript:pressure_display(\""+date+"\")'>Pressure</a><br> ";
+	    //content += "<a href='javascript:pressure_display(\""+date+"\", \"wind10\")'>Wind 10m</a> <br> ";
 	    content += "<a href='javascript:load_flights(convert_date(to_date_obj(\""+date+"\"), \"/\"), convert_date(to_date_obj(\""+date+"\"), \"/\"), true)'>Vols du jour</a> / ";
 	    content += "<a href='javascript:load_flights_pilot(\""+pilot+"\")'>Vols du pilote</a><br>";
 	    popup = L.popup()
