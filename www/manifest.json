@@ -2,7 +2,7 @@
     "short_name": "CFD Explorer",
     "name": "CFD Explorer",
     "display": "fullscreen",
-    "orientation": "landscape"
+    "orientation": "landscape",
     "icons": [
 	{
 	    "src": "img/favicon.ico",
