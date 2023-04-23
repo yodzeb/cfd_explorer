@@ -10,6 +10,11 @@ var all_flights=[];
 
 var form_displayed = true;
 
+
+function gofs() {
+    window.scrollTo(0, 1);
+}
+
 function load_clubs () {
     //var json = require('ressources/clubs.json');
     jQuery.getJSON("ressources/clubs.json", function(json) {
