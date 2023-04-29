@@ -23,7 +23,7 @@ def do_screen(ago):
                                    service_args=service_args,
                                    service_log_path=service_log_path,
                                    chrome_options=chrome_options)
-    url = "http://cfd.wiro.fr/?noform=1&date="+str(ago)
+    url = "http://cfd.wiro.fr:8080/cfd/?noform=1&date="+str(ago)
     driver.get(url)
     time.sleep(30)
     driver.save_screenshot("test.png")

@@ -1,4 +1,5 @@
 
+import traceback
 import sys
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
@@ -13,7 +14,7 @@ import re
 import getopt
 
 conf="./cfd_bot.conf";
-api = "http://cfd.wiro.fr/cgi/get_xls.php"
+api = "http://cfd.wiro.fr:8080/cfd/cgi/get_xls.php"
 
 def read_config(p):
     config = configparser.ConfigParser()
@@ -36,6 +37,7 @@ def date_ago(ago):
 def date_day(day):
     print ("AAA"+day)
     d=datetime.strptime(day, '%d/%m/%Y')
+    print (d)
     return d
 
 def get_data(ds, de, config):
@@ -70,12 +72,15 @@ def get_data(ds, de, config):
             else:
                 text += chr(0x1F414) # chicken
             text+="\n"
-            text+= "http://cfd.wiro.fr/?date="+ds_t+"\n"
+            text+= "http://cfd.wiro.fr:8080/cfd/?date="+ds_t+"\n"
             text+= "https://parapente.ffvl.fr/cfd/liste/last"
             print (text)
             do_screen(ds_t)
             image = "test.png"
-        tweet(text, image, config)
+        try:
+            tweet(text, image, config)
+        except:
+            print ("Most likely a duplicate........");
         print (text)
 
 
@@ -100,15 +105,24 @@ def tweet_day(day, config):
     d=date_day(day)
     get_data(d,d,config)
     sys.exit(0)
+
+def multi_tweet(ago, config):
+    while ago >= 0:
+        to_do = date_ago(ago)
+        get_data(to_do, to_do, config)
+        ago -= 1
     
 if __name__ == '__main__':
     try:
         day=""
-        today=False;
+        today=False
         profile="DEFAULT"
-        opts, args = getopt.getopt(sys.argv[1:], "td:m:p:", ["today", "day=", "month=", "profile="])
+        ago = 0
+        opts, args = getopt.getopt(sys.argv[1:], "td:m:p:a:", ["today", "day=", "month=", "profile=", "ago="])
         for o,a in opts:
             print (o)
+            if (o in ("-a", "--ago")):
+                ago=int(a)
             if (o in ("-d", "--day")):
                 day = a
                 today = False
@@ -117,14 +131,17 @@ if __name__ == '__main__':
             if (o in ("-p", "--profile")):
                 profile = a
         c=read_config(profile)
-        if (day != ""):
-            tweet_day(a, c)
+        if (ago >0):
+            multi_tweet(ago,c)
+        elif (day != ""):
+            tweet_day(day, c)
         elif (today):
             tweet_days(0, c)
         else:
             print ("[!] Nothing to do...")
-    except :
-        e = sys.exc_info()[0]
-        print( "<p>Error: %s</p>" % e )
-        print ("except")
+    except Exception:
+        print(traceback.format_exc())
+        # e = sys.exc_info()[0]
+        # print( "<p>Error: %s</p>" % e )
+        # print ("except")
 
